@@ -1,6 +1,4 @@
-module.exports = {
-  extends: ["@commitlint/config-conventional"],
-  rules: {
+const Configuration = { extends: ['@commitlint/config-conventional'], rules: {
     "type-enum": [
       2,
       "always",
@@ -18,5 +16,5 @@ module.exports = {
         "vercel",
       ],
     ],
-  },
-};
+  }, };
+export default Configuration;

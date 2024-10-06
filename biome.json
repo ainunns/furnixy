@@ -1,5 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
+  "files": {
+    "include": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
+    "ignore": [
+      "**/vendor/**",
+      "**/public/**",
+      "**/node_modules",
+      "**/pnpm-lock.yaml"
+    ]
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -7,13 +16,7 @@
     "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 80,
-    "attributePosition": "auto",
-    "ignore": [
-      "**/vendor/**",
-      "**/public/**",
-      "**/node_modules",
-      "**/pnpm-lock.yaml"
-    ]
+    "attributePosition": "auto"
   },
   "organizeImports": { "enabled": true },
   "linter": {
@@ -92,13 +95,7 @@
         "useValidTypeof": "error"
       }
     },
-    "ignore": [
-      "**/tailwind.config.js",
-      "**/vendor/**",
-      "**/public/**",
-      "**/node_modules",
-      "**/pnpm-lock.yaml"
-    ]
+    "ignore": ["**/tailwind.config.js"]
   },
   "javascript": {
     "formatter": {

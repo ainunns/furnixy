@@ -7,6 +7,14 @@ import { createRoot } from "react-dom/client";
 
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
+declare module "@inertiajs/react" {
+  interface PageProps {
+    auth: {
+      user: Record<string | symbol, unknown> | null;
+    };
+  }
+}
+
 createInertiaApp({
   title: (title) => `${title} - ${appName}`,
   resolve: (name) =>
