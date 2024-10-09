@@ -35,7 +35,11 @@ export default function Create() {
       <Head title="Create Product" />
       <section className="px-10 md:px-20 py-8 flex flex-col gap-8">
         <div className="flex flex-col items-start gap-4 w-full">
-          <ButtonLink leftIcon={ArrowLeft} href={route("product.index")}>
+          <ButtonLink
+            leftIcon={ArrowLeft}
+            href={route("product.index")}
+            openNewTab={false}
+          >
             Back to Home
           </ButtonLink>
           <Typography variant="h1">Add Product</Typography>

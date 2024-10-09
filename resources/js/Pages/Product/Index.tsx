@@ -17,7 +17,11 @@ const ProductIndex = () => {
           <Typography variant="h1" className="font-semibold mb-4">
             All Product
           </Typography>
-          <ButtonLink href="" leftIcon={Plus}>
+          <ButtonLink
+            href={route("product.create")}
+            openNewTab={false}
+            leftIcon={Plus}
+          >
             Add Product
           </ButtonLink>
         </div>

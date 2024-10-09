@@ -48,7 +48,7 @@ export default function Edit({ product }: { product: ProductType }) {
           <ButtonLink leftIcon={ArrowLeft} href={route("product.index")}>
             Back to Home
           </ButtonLink>
-          <Typography variant="h1">Add Product</Typography>
+          <Typography variant="h1">Edit Product</Typography>
           <form onSubmit={submit} className="w-full flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
               <InputLabel htmlFor="name">
