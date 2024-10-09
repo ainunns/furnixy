@@ -1,11 +1,22 @@
+import Button from "@/Components/Button";
 import ButtonLink from "@/Components/ButtonLink";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductType } from "@/types/entities/product";
+import { Inertia } from "@inertiajs/inertia";
 import { Head } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
 
 export default function Show({ product }: { product: ProductType }) {
+  const handleDelete = () => {
+    if (confirm("Are you sure you want to delete this product?")) {
+      Inertia.delete(`/product/${product.id}/delete`, {
+        onSuccess: () => {
+          alert("Product deleted successfully!");
+        },
+      });
+    }
+  };
   return (
     <AuthenticatedLayout>
       <Head title="Detail Product" />
@@ -48,9 +59,9 @@ export default function Show({ product }: { product: ProductType }) {
           <ButtonLink href="/" className="flex w-3/5">
             Edit Product
           </ButtonLink>
-          <ButtonLink href="/" className="flex w-3/5">
+          <Button onClick={handleDelete} className="flex w-3/5">
             Delete Product
-          </ButtonLink>
+          </Button>
         </div>
       </div>
     </AuthenticatedLayout>

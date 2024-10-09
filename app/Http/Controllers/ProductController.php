@@ -76,4 +76,11 @@ class ProductController extends Controller
         return Inertia::render('Product/Show', compact('product'));
     }
 
+    public function destroy(string $id) {
+        $product = Product::findOrFail($id);
+        $product->delete();
+
+        return redirect()->route('product.index');
+    }
+
 }
