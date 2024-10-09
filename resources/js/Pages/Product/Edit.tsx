@@ -6,11 +6,14 @@ import InputLabel from "@/Components/InputLabel";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductType } from "@/types/entities/product";
+import { PredictionType } from "@/types/entities/roboflow";
 import { Head, useForm } from "@inertiajs/react";
+import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import { type FormEventHandler, useState } from "react";
 
 export default function Edit({ product }: { product: ProductType }) {
+  const [categories, setCategories] = useState<number[]>([]);
   const [previewUrl, setPreviewUrl] = useState("/storage/" + product.image_url);
 
   const { data, setData, patch, processing, errors, reset, isDirty } = useForm<
@@ -20,6 +23,7 @@ export default function Edit({ product }: { product: ProductType }) {
     description: product.description,
     price: product.price,
     stock: product.stock,
+    categories: product.categories,
     city: product.city,
     image_url: previewUrl,
   });
@@ -29,7 +33,46 @@ export default function Edit({ product }: { product: ProductType }) {
     if (files && files[0]) {
       setData("image_url", files[0]);
       setPreviewUrl(URL.createObjectURL(files[0]));
+      fetchCategories(files[0]);
     }
+  };
+
+  const fetchCategories = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Image = event.target?.result?.toString().split(",")[1];
+
+      if (base64Image) {
+        axios<PredictionType>({
+          method: "POST",
+          url: process.env.ROBOFLOW_API_URL,
+          params: {
+            api_key: process.env.ROBOFLOW_API_KEY,
+          },
+          data: base64Image,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        })
+          .then(function (response) {
+            const predictions = response.data.predictions || [];
+            const newCategories = predictions.map(
+              (prediction) => prediction.class_id + 1,
+            );
+            setCategories(newCategories);
+            setData("categories", newCategories);
+          })
+          .catch(function (error) {
+            console.error(error.message);
+          });
+      } else {
+        console.error("Failed to read image file");
+      }
+    };
+    reader.onerror = (error) => {
+      console.error("Error reading file:", error);
+    };
+    reader.readAsDataURL(file);
   };
 
   const submit: FormEventHandler = (e) => {
@@ -139,13 +182,15 @@ export default function Edit({ product }: { product: ProductType }) {
                 id="image_url"
                 type="file"
                 onChange={handleImageChange}
-                accept="image/jpeg"
+                accept="image/*"
               />
 
               <img src={previewUrl} alt={product.name} width="300px" />
 
               <InputError message={errors.image_url} className="mt-2" />
             </div>
+
+            <p>{categories}</p>
 
             <Button type="submit" disabled={processing || !isDirty}>
               Submit

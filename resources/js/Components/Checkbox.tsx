@@ -1,4 +1,3 @@
-import Input from "@/Components/Input";
 import type { InputHTMLAttributes } from "react";
 
 export default function Checkbox({
@@ -6,7 +5,7 @@ export default function Checkbox({
   ...props
 }: InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <Input
+    <input
       {...props}
       type="checkbox"
       className={

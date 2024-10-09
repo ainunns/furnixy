@@ -6,11 +6,14 @@ import InputLabel from "@/Components/InputLabel";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductType } from "@/types/entities/product";
+import { PredictionType } from "@/types/entities/roboflow";
 import { Head, useForm } from "@inertiajs/react";
+import axios from "axios";
 import { ArrowLeft } from "lucide-react";
-import type { FormEventHandler } from "react";
+import { type FormEventHandler, useState } from "react";
 
 export default function Create() {
+  const [categories, setCategories] = useState<number[]>([]);
   const { data, setData, post, processing, errors, reset } = useForm<
     Omit<ProductType, "id">
   >({
@@ -18,9 +21,56 @@ export default function Create() {
     description: "",
     price: 0,
     stock: 0,
+    categories: categories,
     city: "",
     image_url: null,
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      setData("image_url", files[0]);
+      fetchCategories(files[0]);
+    }
+  };
+
+  const fetchCategories = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64Image = event.target?.result?.toString().split(",")[1];
+
+      if (base64Image) {
+        axios<PredictionType>({
+          method: "POST",
+          url: process.env.ROBOFLOW_API_URL,
+          params: {
+            api_key: process.env.ROBOFLOW_API_KEY,
+          },
+          data: base64Image,
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        })
+          .then(function (response) {
+            const predictions = response.data.predictions || [];
+            const newCategories = predictions.map(
+              (prediction) => prediction.class_id + 1,
+            );
+            setCategories(newCategories);
+            setData("categories", newCategories);
+          })
+          .catch(function (error) {
+            console.error(error.message);
+          });
+      } else {
+        console.error("Failed to read image file");
+      }
+    };
+    reader.onerror = (error) => {
+      console.error("Error reading file:", error);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
@@ -132,17 +182,13 @@ export default function Create() {
               <Input
                 id="image_url"
                 type="file"
-                onChange={(e) => {
-                  const files = e.target.files;
-                  if (files && files[0]) {
-                    setData("image_url", files[0]);
-                  }
-                }}
-                accept="image/jpeg"
+                onChange={handleImageChange}
+                accept="image/*"
               />
 
               <InputError message={errors.image_url} className="mt-2" />
             </div>
+            <p>{JSON.stringify(data.categories, null, 2)}</p>
 
             <Button type="submit" disabled={processing}>
               Submit

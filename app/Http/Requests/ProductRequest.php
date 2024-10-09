@@ -24,9 +24,9 @@ class ProductRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'description' => ['required', 'string'],
-            'price' => ['required', 'numeric'],  // Changed from decimal:10,2 for simplicity
+            'price' => ['required', 'numeric'], 
             'stock' => ['required', 'integer'],
-            'image_url' => ['required', 'image', 'mimes:jpeg'],  // Since you're accepting jpeg images
+            'image_url' => ['required', 'image', 'image|mimes:jpeg,jpg,png,gif,svg'],
             'city'  => ['required', 'string'],
         ];
     }

@@ -5,5 +5,6 @@ export type ProductType = {
   price: number;
   stock: number;
   city: string;
-  image_url: File | string | null;
+  categories: number[];
+  image_url: File | string | Blob | null;
 };
