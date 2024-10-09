@@ -38,6 +38,8 @@
     "vite": "^5.0"
   },
   "dependencies": {
-    "lucide-react": "^0.451.0"
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.451.0",
+    "tailwind-merge": "^2.5.3"
   }
 }
