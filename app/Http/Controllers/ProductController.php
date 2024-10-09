@@ -64,4 +64,16 @@ class ProductController extends Controller
 
         return redirect()->intended(route('product.show', $id));
     }
+    public function index() {
+        $product = Product::all();
+
+        return Inertia::render('Product/Index', compact('product'));
+    }
+
+    public function show(string $id) {
+        $product = Product::findOrFail($id);
+
+        return Inertia::render('Product/Show', compact('product'));
+    }
+
 }
