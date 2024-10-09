@@ -8,31 +8,41 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductType } from "@/types/entities/product";
 import { Head, useForm } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
-import type { FormEventHandler } from "react";
+import { useState, type FormEventHandler } from "react";
 
-export default function Create() {
-  const { data, setData, post, processing, errors, reset } = useForm<
+export default function Edit({ product }: { product: ProductType }) {
+  const [previewUrl, setPreviewUrl] = useState("/storage/" + product.image_url);
+
+  const { data, setData, patch, processing, errors, reset, isDirty } = useForm<
     Omit<ProductType, "id">
   >({
-    name: "",
-    description: "",
-    price: 0,
-    stock: 0,
-    city: "",
-    image_url: null,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    stock: product.stock,
+    city: product.city,
+    image_url: previewUrl,
   });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files[0]) {
+      setData("image_url", files[0]);
+      setPreviewUrl(URL.createObjectURL(files[0]));
+    }
+  };
 
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    post(route("product.store"), {
+    patch(route("product.update", product.id), {
       onFinish: () => reset(),
     });
   };
 
   return (
     <AuthenticatedLayout>
-      <Head title="Create Product" />
+      <Head title="Edit Product" />
       <section className="px-10 md:px-20 py-8 flex flex-col gap-8">
         <div className="flex flex-col items-start gap-4 w-full">
           <ButtonLink leftIcon={ArrowLeft} href="{{ route('product') }}">
@@ -128,19 +138,16 @@ export default function Create() {
               <Input
                 id="image_url"
                 type="file"
-                onChange={(e) => {
-                  const files = e.target.files;
-                  if (files && files[0]) {
-                    setData("image_url", files[0]);
-                  }
-                }}
+                onChange={handleImageChange}
                 accept="image/jpeg"
               />
+
+              <img src={previewUrl} alt={product.name} width="300px" />
 
               <InputError message={errors.image_url} className="mt-2" />
             </div>
 
-            <Button type="submit" disabled={processing}>
+            <Button type="submit" disabled={processing || !isDirty}>
               Submit
             </Button>
           </form>

@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Product;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -33,7 +34,34 @@ class ProductController extends Controller
 
         $product->save();
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('product.show'));
     }
 
+    public function edit(string $id) {
+        $product = Product::findOrFail($id);
+
+        return Inertia::render('Product/Edit', [
+            'product' => $product
+        ]);
+    }
+
+    public function update(Request $request, string $id) {
+        $product = Product::findOrFail($id);
+
+        $product->name = $request->name ?? $product->name;
+        $product->description = $request->description ?? $product->description;
+        $product->price = $request->price ?? $product->price;
+        $product->stock = $request->stock ?? $product->stock;
+        $product->rating = $request->rating ?? $product->rating;
+        $product->city = $request->city ?? $product->city;
+        $product->category_id = 1;
+
+        if ($request->hasFile('image_url')) {
+            $product->image_url = $request->file('image_url')->store('images', 'public');
+        }
+
+        $product->save();
+
+        return redirect()->intended(route('product.show', $id));
+    }
 }
