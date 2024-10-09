@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes } from "react";
+import Input from "@/Components/Input";
 
 export default function Checkbox({
   className = "",

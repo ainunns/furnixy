@@ -41,7 +41,8 @@ export default forwardRef(function Input(
         "disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100 disabled:focus:border-gray-300 disabled:focus:ring-0",
         "read-only:cursor-not-allowed read-only:border-gray-300 read-only:bg-gray-100 read-only:focus:border-gray-300 read-only:focus:ring-0",
         "invalid:border-red-500 invalid:focus:border-red-500 invalid:focus:ring-red-500",
-        +className,
+        "file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-neutral-700 file:cursor-pointer",
+        className,
       )}
       ref={localRef}
     />
