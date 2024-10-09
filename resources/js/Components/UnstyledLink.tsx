@@ -3,7 +3,7 @@ import { InertiaLinkProps, Link } from "@inertiajs/react";
 import * as React from "react";
 
 export type UnstyledLinkProps = {
-  href: string;
+  href: string | Pick<InertiaLinkProps, "href">;
   children: React.ReactNode;
   openNewTab?: boolean;
   className?: string;

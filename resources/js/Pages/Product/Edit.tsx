@@ -45,8 +45,8 @@ export default function Edit({ product }: { product: ProductType }) {
       <Head title="Edit Product" />
       <section className="px-10 md:px-20 py-8 flex flex-col gap-8">
         <div className="flex flex-col items-start gap-4 w-full">
-          <ButtonLink leftIcon={ArrowLeft} href="{{ route('product') }}">
-            Back
+          <ButtonLink leftIcon={ArrowLeft} href={route("product.index")}>
+            Back to Home
           </ButtonLink>
           <Typography variant="h1">Add Product</Typography>
           <form onSubmit={submit} className="w-full flex flex-col gap-4">
