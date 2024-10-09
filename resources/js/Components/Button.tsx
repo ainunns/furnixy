@@ -34,6 +34,7 @@ export default function Button({
   rightIcon: RightIcon,
   leftIconClassName = "",
   rightIconClassName = "",
+  type = "button",
   ...rest
 }: ButtonProps) {
   const disabled = isLoading || buttonDisabled;
@@ -41,7 +42,7 @@ export default function Button({
   return (
     <button
       {...rest}
-      type="button"
+      type={type}
       disabled={disabled}
       className={cn(
         "inline-flex items-center justify-center rounded-lg font-medium",
