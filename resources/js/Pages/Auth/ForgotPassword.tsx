@@ -1,6 +1,6 @@
+import Input from "@/Components/Input";
 import InputError from "@/Components/InputError";
 import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, useForm } from "@inertiajs/react";
 import type { FormEventHandler } from "react";
@@ -31,7 +31,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
       )}
 
       <form onSubmit={submit}>
-        <TextInput
+        <Input
           id="email"
           type="email"
           name="email"

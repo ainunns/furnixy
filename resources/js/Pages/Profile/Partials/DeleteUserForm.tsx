@@ -1,9 +1,9 @@
 import DangerButton from "@/Components/DangerButton";
+import Input from "@/Components/Input";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
-import TextInput from "@/Components/TextInput";
 import { useForm } from "@inertiajs/react";
 import { type FormEventHandler, useRef, useState } from "react";
 
@@ -82,7 +82,7 @@ export default function DeleteUserForm({
               className="sr-only"
             />
 
-            <TextInput
+            <Input
               id="password"
               type="password"
               name="password"

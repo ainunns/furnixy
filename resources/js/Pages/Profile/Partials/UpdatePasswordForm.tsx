@@ -1,7 +1,7 @@
+import Input from "@/Components/Input";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import { Transition } from "@headlessui/react";
 import { useForm } from "@inertiajs/react";
 import { type FormEventHandler, useRef } from "react";
@@ -55,7 +55,7 @@ export default function UpdatePasswordForm({
         <div>
           <InputLabel htmlFor="current_password" value="Current Password" />
 
-          <TextInput
+          <Input
             id="current_password"
             ref={currentPasswordInput}
             value={data.current_password}
@@ -71,7 +71,7 @@ export default function UpdatePasswordForm({
         <div>
           <InputLabel htmlFor="password" value="New Password" />
 
-          <TextInput
+          <Input
             id="password"
             ref={passwordInput}
             value={data.password}
@@ -90,7 +90,7 @@ export default function UpdatePasswordForm({
             value="Confirm Password"
           />
 
-          <TextInput
+          <Input
             id="password_confirmation"
             value={data.password_confirmation}
             onChange={(e) => setData("password_confirmation", e.target.value)}

@@ -1,8 +1,8 @@
 import Checkbox from "@/Components/Checkbox";
+import Input from "@/Components/Input";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import type { FormEventHandler } from "react";
@@ -40,7 +40,7 @@ export default function Login({
         <div>
           <InputLabel htmlFor="email" value="Email" />
 
-          <TextInput
+          <Input
             id="email"
             type="email"
             name="email"
@@ -57,7 +57,7 @@ export default function Login({
         <div className="mt-4">
           <InputLabel htmlFor="password" value="Password" />
 
-          <TextInput
+          <Input
             id="password"
             type="password"
             name="password"
