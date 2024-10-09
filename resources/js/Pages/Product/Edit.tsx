@@ -8,7 +8,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductType } from "@/types/entities/product";
 import { Head, useForm } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
-import { useState, type FormEventHandler } from "react";
+import { type FormEventHandler, useState } from "react";
 
 export default function Edit({ product }: { product: ProductType }) {
   const [previewUrl, setPreviewUrl] = useState("/storage/" + product.image_url);
