@@ -33,23 +33,23 @@ export default function Show({ product }: { product: ProductType }) {
               alt={product.name}
               className="w-1/2 rounded-md mb-4"
             />
-            <div className="grid grid-cols-2 w-3/5">
+            <div className="grid grid-cols-2 w-full md:w-3/5">
               <Typography variant="s1">Name</Typography>
               <Typography variant="s1">: {product.name}</Typography>
             </div>
-            <div className="grid grid-cols-2 w-3/5">
+            <div className="grid grid-cols-2 w-full md:w-3/5">
               <Typography variant="s1">Description</Typography>
               <Typography variant="s1">: {product.description}</Typography>
             </div>
-            <div className="grid grid-cols-2 w-3/5">
+            <div className="grid grid-cols-2 w-full md:w-3/5">
               <Typography variant="s1">Price</Typography>
               <Typography variant="s1">: Rp{product.price}</Typography>
             </div>
-            <div className="grid grid-cols-2 w-3/5">
+            <div className="grid grid-cols-2 w-full md:w-3/5">
               <Typography variant="s1">Stock</Typography>
               <Typography variant="s1">: {product.stock}</Typography>
             </div>
-            <div className="grid grid-cols-2 w-3/5">
+            <div className="grid grid-cols-2 w-full md:w-3/5">
               <Typography variant="s1">City</Typography>
               <Typography variant="s1">: {product.city}</Typography>
             </div>
