@@ -27,7 +27,7 @@ class ProductRequest extends FormRequest
             'description' => ['required', 'string'],
             'price' => ['required', 'numeric'], 
             'stock' => ['required', 'integer'],
-            'image_url' => ['required', File::image()],
+            'image_url' => ['required'],
             'city'  => ['required', 'string'],
         ];
     }
