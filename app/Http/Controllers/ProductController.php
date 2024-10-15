@@ -26,10 +26,9 @@ class ProductController extends Controller
         $product->rating = 0.0;
         $product->city = $request->city;
         $product->category_id = 1;
-        
 
         if ($request->hasFile('image_url')) {
-            $product->image_url = $request->file('image_url')->store('images', 'public');
+            $product->image_url = $request->file('image_url')[0]->store('images', 'public');
         }
 
         $product->save();
@@ -57,7 +56,7 @@ class ProductController extends Controller
         $product->category_id = 1;
 
         if ($request->hasFile('image_url')) {
-            $product->image_url = $request->file('image_url')->store('images', 'public');
+            $product->image_url = $request->file('image_url')[0]->store('images', 'public');
         }
 
         $product->save();

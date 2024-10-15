@@ -1,24 +1,45 @@
-import Input from "@/Components/Input";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import Input from "@/Components/Forms/Input";
 import PrimaryButton from "@/Components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, Link, useForm } from "@inertiajs/react";
-import type { FormEventHandler } from "react";
+import { REGEX } from "@/Lib/regex";
+import { Head, Link, useForm as useFormInertia } from "@inertiajs/react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+};
 
 export default function Register() {
-  const { data, setData, post, processing, errors, reset } = useForm({
+  const methods = useForm<FormData>({
+    mode: "onTouched",
+  });
+
+  const { handleSubmit, reset, getValues } = methods;
+
+  const { post, processing, transform } = useFormInertia({
     name: "",
     email: "",
     password: "",
     password_confirmation: "",
   });
 
-  const submit: FormEventHandler = (e) => {
-    e.preventDefault();
+  transform((data) => {
+    const registerData = getValues();
 
+    data.name = registerData.name;
+    data.email = registerData.email;
+    data.password = registerData.password;
+    data.password_confirmation = registerData.password_confirmation;
+
+    return data;
+  });
+
+  const onSubmit: SubmitHandler<FormData> = () => {
     post(route("register"), {
-      onFinish: () => reset("password", "password_confirmation"),
+      onFinish: () => reset(),
     });
   };
 
@@ -26,91 +47,74 @@ export default function Register() {
     <GuestLayout>
       <Head title="Register" />
 
-      <form onSubmit={submit}>
-        <div>
-          <InputLabel htmlFor="name" value="Name" />
-
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
           <Input
             id="name"
-            name="name"
-            value={data.name}
-            className="mt-1 block w-full"
-            autoComplete="name"
-            isFocused={true}
-            onChange={(e) => setData("name", e.target.value)}
-            required
+            label="Name"
+            type="text"
+            placeholder="Your name"
+            validation={{
+              required: "Name is required",
+            }}
           />
-
-          <InputError message={errors.name} className="mt-2" />
-        </div>
-
-        <div className="mt-4">
-          <InputLabel htmlFor="email" value="Email" />
 
           <Input
             id="email"
+            label="Email"
             type="email"
-            name="email"
-            value={data.email}
-            className="mt-1 block w-full"
-            autoComplete="username"
-            onChange={(e) => setData("email", e.target.value)}
-            required
+            placeholder="Your email"
+            validation={{
+              required: "Email is required",
+              pattern: {
+                value: REGEX.EMAIL,
+                message: "Please enter a valid email address",
+              },
+            }}
           />
-
-          <InputError message={errors.email} className="mt-2" />
-        </div>
-
-        <div className="mt-4">
-          <InputLabel htmlFor="password" value="Password" />
 
           <Input
             id="password"
+            label="Password"
             type="password"
-            name="password"
-            value={data.password}
-            className="mt-1 block w-full"
-            autoComplete="new-password"
-            onChange={(e) => setData("password", e.target.value)}
-            required
-          />
-
-          <InputError message={errors.password} className="mt-2" />
-        </div>
-
-        <div className="mt-4">
-          <InputLabel
-            htmlFor="password_confirmation"
-            value="Confirm Password"
+            placeholder="Your password"
+            validation={{
+              required: "Password is required",
+              pattern: {
+                value: REGEX.PASSWORD,
+                message:
+                  "Password must contain at least 8 characters, one uppercase, one lowercase, and one number",
+              },
+            }}
           />
 
           <Input
             id="password_confirmation"
+            label="Confirm Password"
             type="password"
-            name="password_confirmation"
-            value={data.password_confirmation}
-            className="mt-1 block w-full"
-            autoComplete="new-password"
-            onChange={(e) => setData("password_confirmation", e.target.value)}
-            required
+            placeholder="Confirm your password"
+            validation={{
+              required: "Password confirmation is required",
+              validate: (value) =>
+                value === methods.getValues("password") ||
+                "The passwords do not match",
+            }}
           />
 
-          <InputError message={errors.password_confirmation} className="mt-2" />
-        </div>
+          <div className="mt-4 flex items-center justify-end">
+            <Link
+              href={route("login")}
+              className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            >
+              Already registered?
+            </Link>
 
-        <div className="mt-4 flex items-center justify-end">
-          <Link
-            href={route("login")}
-            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Already registered?
-          </Link>
-
-          <PrimaryButton className="ms-4" disabled={processing}>
-            Register
-          </PrimaryButton>
-        </div>
-      </form>
+            <PrimaryButton type="submit" className="ms-4" disabled={processing}>
+              Register
+            </PrimaryButton>
+          </div>
+        </form>
+      </FormProvider>
     </GuestLayout>
   );
 }

@@ -1,11 +1,14 @@
 import DangerButton from "@/Components/DangerButton";
-import Input from "@/Components/Input";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import Input from "@/Components/Forms/Input";
 import Modal from "@/Components/Modal";
 import SecondaryButton from "@/Components/SecondaryButton";
-import { useForm } from "@inertiajs/react";
-import { type FormEventHandler, useRef, useState } from "react";
+import { useForm as useFormInertia } from "@inertiajs/react";
+import { useState } from "react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+
+type FormData = {
+  passsword: string;
+};
 
 export default function DeleteUserForm({
   className = "",
@@ -13,17 +16,18 @@ export default function DeleteUserForm({
   className?: string;
 }) {
   const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
-  const passwordInput = useRef<HTMLInputElement>(null);
+
+  const methods = useForm<FormData>({
+    mode: "onTouched",
+  });
+
+  const { handleSubmit, reset, setError, getValues } = methods;
 
   const {
-    data,
-    setData,
     delete: destroy,
     processing,
-    reset,
-    errors,
-    clearErrors,
-  } = useForm({
+    transform,
+  } = useFormInertia({
     password: "",
   });
 
@@ -31,13 +35,22 @@ export default function DeleteUserForm({
     setConfirmingUserDeletion(true);
   };
 
-  const deleteUser: FormEventHandler = (e) => {
-    e.preventDefault();
+  transform((data) => {
+    const deleteUserData = getValues();
+    data.password = deleteUserData.passsword;
 
+    return data;
+  });
+
+  const onSubmit: SubmitHandler<FormData> = () => {
     destroy(route("profile.destroy"), {
       preserveScroll: true,
       onSuccess: () => closeModal(),
-      onError: () => passwordInput.current?.focus(),
+      onError: () =>
+        setError("passsword", {
+          type: "manual",
+          message: "The provided password was incorrect.",
+        }),
       onFinish: () => reset(),
     });
   };
@@ -45,7 +58,6 @@ export default function DeleteUserForm({
   const closeModal = () => {
     setConfirmingUserDeletion(false);
 
-    clearErrors();
     reset();
   };
 
@@ -64,47 +76,41 @@ export default function DeleteUserForm({
       <DangerButton onClick={confirmUserDeletion}>Delete Account</DangerButton>
 
       <Modal show={confirmingUserDeletion} onClose={closeModal}>
-        <form onSubmit={deleteUser} className="p-6">
-          <h2 className="text-lg font-medium text-gray-900">
-            Are you sure you want to delete your account?
-          </h2>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)} className="p-6">
+            <h2 className="text-lg font-medium text-gray-900">
+              Are you sure you want to delete your account?
+            </h2>
 
-          <p className="mt-1 text-sm text-gray-600">
-            Once your account is deleted, all of its resources and data will be
-            permanently deleted. Please enter your password to confirm you would
-            like to permanently delete your account.
-          </p>
-
-          <div className="mt-6">
-            <InputLabel
-              htmlFor="password"
-              value="Password"
-              className="sr-only"
-            />
+            <p className="mt-1 text-sm text-gray-600">
+              Once your account is deleted, all of its resources and data will
+              be permanently deleted. Please enter your password to confirm you
+              would like to permanently delete your account.
+            </p>
 
             <Input
               id="password"
+              label="Password"
               type="password"
-              name="password"
-              ref={passwordInput}
-              value={data.password}
-              onChange={(e) => setData("password", e.target.value)}
-              className="mt-1 block w-3/4"
-              isFocused
-              placeholder="Password"
+              placeholder="Your password"
+              validation={{
+                required: "Password is required",
+              }}
             />
 
-            <InputError message={errors.password} className="mt-2" />
-          </div>
+            <div className="mt-6 flex justify-end">
+              <SecondaryButton onClick={closeModal}>Cancel</SecondaryButton>
 
-          <div className="mt-6 flex justify-end">
-            <SecondaryButton onClick={closeModal}>Cancel</SecondaryButton>
-
-            <DangerButton className="ms-3" disabled={processing}>
-              Delete Account
-            </DangerButton>
-          </div>
-        </form>
+              <DangerButton
+                type="submit"
+                className="ms-3"
+                disabled={processing}
+              >
+                Delete Account
+              </DangerButton>
+            </div>
+          </form>
+        </FormProvider>
       </Modal>
     </section>
   );

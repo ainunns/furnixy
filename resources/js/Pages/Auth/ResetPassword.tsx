@@ -1,10 +1,16 @@
-import Input from "@/Components/Input";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import Input from "@/Components/Forms/Input";
 import PrimaryButton from "@/Components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, useForm } from "@inertiajs/react";
-import type { FormEventHandler } from "react";
+import { REGEX } from "@/Lib/regex";
+import { Head, useForm as useFormInertia } from "@inertiajs/react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+
+type FormData = {
+  token: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+};
 
 export default function ResetPassword({
   token,
@@ -13,18 +19,39 @@ export default function ResetPassword({
   token: string;
   email: string;
 }) {
-  const { data, setData, post, processing, errors, reset } = useForm({
+  const methods = useForm<FormData>({
+    mode: "onTouched",
+    defaultValues: {
+      token: token,
+      email: email,
+      password: "",
+      password_confirmation: "",
+    },
+  });
+
+  const { handleSubmit, reset, getValues } = methods;
+
+  const { post, processing, transform } = useFormInertia({
     token: token,
     email: email,
     password: "",
     password_confirmation: "",
   });
 
-  const submit: FormEventHandler = (e) => {
-    e.preventDefault();
+  transform((data) => {
+    const resetPassData = getValues();
 
+    data.token = token;
+    data.email = resetPassData.email;
+    data.password = resetPassData.password;
+    data.password_confirmation = resetPassData.password_confirmation;
+
+    return data;
+  });
+
+  const onSubmit: SubmitHandler<FormData> = () => {
     post(route("password.store"), {
-      onFinish: () => reset("password", "password_confirmation"),
+      onFinish: () => reset(),
     });
   };
 
@@ -32,64 +59,67 @@ export default function ResetPassword({
     <GuestLayout>
       <Head title="Reset Password" />
 
-      <form onSubmit={submit}>
-        <div>
-          <InputLabel htmlFor="email" value="Email" />
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
+          <Input
+            id="name"
+            label="Name"
+            type="text"
+            placeholder="Your name"
+            validation={{
+              required: "Name is required",
+            }}
+          />
 
           <Input
             id="email"
+            label="Email"
             type="email"
-            name="email"
-            value={data.email}
-            className="mt-1 block w-full"
-            autoComplete="username"
-            onChange={(e) => setData("email", e.target.value)}
+            placeholder="Your email"
+            validation={{
+              required: "Email is required",
+              pattern: {
+                value: REGEX.EMAIL,
+                message: "Please enter a valid email address",
+              },
+            }}
           />
-
-          <InputError message={errors.email} className="mt-2" />
-        </div>
-
-        <div className="mt-4">
-          <InputLabel htmlFor="password" value="Password" />
 
           <Input
             id="password"
+            label="Password"
             type="password"
-            name="password"
-            value={data.password}
-            className="mt-1 block w-full"
-            autoComplete="new-password"
-            isFocused={true}
-            onChange={(e) => setData("password", e.target.value)}
-          />
-
-          <InputError message={errors.password} className="mt-2" />
-        </div>
-
-        <div className="mt-4">
-          <InputLabel
-            htmlFor="password_confirmation"
-            value="Confirm Password"
+            placeholder="Your password"
+            validation={{
+              required: "Password is required",
+              pattern: {
+                value: REGEX.PASSWORD,
+                message:
+                  "Password must contain at least 8 characters, one uppercase, one lowercase, and one number",
+              },
+            }}
           />
 
           <Input
+            id="password_confirmation"
+            label="Confirm Password"
             type="password"
-            name="password_confirmation"
-            value={data.password_confirmation}
-            className="mt-1 block w-full"
-            autoComplete="new-password"
-            onChange={(e) => setData("password_confirmation", e.target.value)}
+            placeholder="Confirm your password"
+            validation={{
+              required: "Password confirmation is required",
+              validate: (value) =>
+                value === methods.getValues("password") ||
+                "The passwords do not match",
+            }}
           />
 
-          <InputError message={errors.password_confirmation} className="mt-2" />
-        </div>
-
-        <div className="mt-4 flex items-center justify-end">
-          <PrimaryButton className="ms-4" disabled={processing}>
-            Reset Password
-          </PrimaryButton>
-        </div>
-      </form>
+          <div className="mt-4 flex items-center justify-end">
+            <PrimaryButton type="submit" className="ms-4" disabled={processing}>
+              Reset Password
+            </PrimaryButton>
+          </div>
+        </form>
+      </FormProvider>
     </GuestLayout>
   );
 }

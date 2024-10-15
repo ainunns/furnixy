@@ -1,21 +1,34 @@
-import Input from "@/Components/Input";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import Input from "@/Components/Forms/Input";
 import PrimaryButton from "@/Components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, useForm } from "@inertiajs/react";
-import type { FormEventHandler } from "react";
+import { Head, useForm as useFormInertia } from "@inertiajs/react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+
+type FormData = {
+  password: string;
+};
 
 export default function ConfirmPassword() {
-  const { data, setData, post, processing, errors, reset } = useForm({
+  const methods = useForm<FormData>({
+    mode: "onTouched",
+  });
+
+  const { handleSubmit, reset, getValues } = methods;
+
+  const { post, processing, transform } = useFormInertia({
     password: "",
   });
 
-  const submit: FormEventHandler = (e) => {
-    e.preventDefault();
+  transform((data) => {
+    const confirmPassData = getValues();
+    data.password = confirmPassData.password;
 
+    return data;
+  });
+
+  const onSubmit: SubmitHandler<FormData> = () => {
     post(route("password.confirm"), {
-      onFinish: () => reset("password"),
+      onFinish: () => reset(),
     });
   };
 
@@ -28,29 +41,24 @@ export default function ConfirmPassword() {
         before continuing.
       </div>
 
-      <form onSubmit={submit}>
-        <div className="mt-4">
-          <InputLabel htmlFor="password" value="Password" />
-
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Input
             id="password"
+            label="Password"
             type="password"
-            name="password"
-            value={data.password}
-            className="mt-1 block w-full"
-            isFocused={true}
-            onChange={(e) => setData("password", e.target.value)}
+            placeholder="Your password"
+            validation={{
+              required: "Password is required",
+            }}
           />
-
-          <InputError message={errors.password} className="mt-2" />
-        </div>
-
-        <div className="mt-4 flex items-center justify-end">
-          <PrimaryButton className="ms-4" disabled={processing}>
-            Confirm
-          </PrimaryButton>
-        </div>
-      </form>
+          <div className="mt-4 flex items-center justify-end">
+            <PrimaryButton type="submit" className="ms-4" disabled={processing}>
+              Confirm
+            </PrimaryButton>
+          </div>
+        </form>
+      </FormProvider>
     </GuestLayout>
   );
 }

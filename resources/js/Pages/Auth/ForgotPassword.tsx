@@ -1,18 +1,33 @@
-import Input from "@/Components/Input";
-import InputError from "@/Components/InputError";
+import Input from "@/Components/Forms/Input";
 import PrimaryButton from "@/Components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Head, useForm } from "@inertiajs/react";
-import type { FormEventHandler } from "react";
+import { REGEX } from "@/Lib/regex";
+import { Head, useForm as useFormInertia } from "@inertiajs/react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+
+type FormData = {
+  email: string;
+};
 
 export default function ForgotPassword({ status }: { status?: string }) {
-  const { data, setData, post, processing, errors } = useForm({
+  const methods = useForm<FormData>({
+    mode: "onTouched",
+  });
+
+  const { handleSubmit, getValues } = methods;
+
+  const { post, processing, transform } = useFormInertia({
     email: "",
   });
 
-  const submit: FormEventHandler = (e) => {
-    e.preventDefault();
+  transform((data) => {
+    const forgotPassData = getValues();
+    data.email = forgotPassData.email;
 
+    return data;
+  });
+
+  const onSubmit: SubmitHandler<FormData> = () => {
     post(route("password.email"));
   };
 
@@ -30,25 +45,28 @@ export default function ForgotPassword({ status }: { status?: string }) {
         <div className="mb-4 text-sm font-medium text-green-600">{status}</div>
       )}
 
-      <form onSubmit={submit}>
-        <Input
-          id="email"
-          type="email"
-          name="email"
-          value={data.email}
-          className="mt-1 block w-full"
-          isFocused={true}
-          onChange={(e) => setData("email", e.target.value)}
-        />
-
-        <InputError message={errors.email} className="mt-2" />
-
-        <div className="mt-4 flex items-center justify-end">
-          <PrimaryButton className="ms-4" disabled={processing}>
-            Email Password Reset Link
-          </PrimaryButton>
-        </div>
-      </form>
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            placeholder="Your email"
+            validation={{
+              required: "Email is required",
+              pattern: {
+                value: REGEX.EMAIL,
+                message: "Please enter a valid email address",
+              },
+            }}
+          />
+          <div className="mt-4 flex items-center justify-end">
+            <PrimaryButton type="submit" className="ms-4" disabled={processing}>
+              Email Password Reset Link
+            </PrimaryButton>
+          </div>
+        </form>
+      </FormProvider>
     </GuestLayout>
   );
 }

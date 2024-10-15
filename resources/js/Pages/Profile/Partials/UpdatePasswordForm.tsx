@@ -1,43 +1,47 @@
-import Input from "@/Components/Input";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
+import Input from "@/Components/Forms/Input";
 import PrimaryButton from "@/Components/PrimaryButton";
+import { REGEX } from "@/Lib/regex";
 import { Transition } from "@headlessui/react";
-import { useForm } from "@inertiajs/react";
-import { type FormEventHandler, useRef } from "react";
+import { useForm as useFormInertia } from "@inertiajs/react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+
+type FormData = {
+  current_password: string;
+  password: string;
+  password_confirmation: string;
+};
 
 export default function UpdatePasswordForm({
   className = "",
 }: {
   className?: string;
 }) {
-  const passwordInput = useRef<HTMLInputElement>(null);
-  const currentPasswordInput = useRef<HTMLInputElement>(null);
+  const methods = useForm<FormData>({
+    mode: "onTouched",
+  });
 
-  const { data, setData, errors, put, reset, processing, recentlySuccessful } =
-    useForm({
-      current_password: "",
-      password: "",
-      password_confirmation: "",
-    });
+  const { handleSubmit, reset, getValues } = methods;
 
-  const updatePassword: FormEventHandler = (e) => {
-    e.preventDefault();
+  const { put, processing, recentlySuccessful, transform } = useFormInertia({
+    current_password: "",
+    password: "",
+    password_confirmation: "",
+  });
 
+  transform((data) => {
+    const updatePassData = getValues();
+
+    data.current_password = updatePassData.current_password;
+    data.password = updatePassData.password;
+    data.password_confirmation = updatePassData.password_confirmation;
+
+    return data;
+  });
+
+  const onSubmit: SubmitHandler<FormData> = () => {
     put(route("password.update"), {
       preserveScroll: true,
       onSuccess: () => reset(),
-      onError: (errors) => {
-        if (errors.password) {
-          reset("password", "password_confirmation");
-          passwordInput.current?.focus();
-        }
-
-        if (errors.current_password) {
-          reset("current_password");
-          currentPasswordInput.current?.focus();
-        }
-      },
     });
   };
 
@@ -51,71 +55,63 @@ export default function UpdatePasswordForm({
         </p>
       </header>
 
-      <form onSubmit={updatePassword} className="mt-6 space-y-6">
-        <div>
-          <InputLabel htmlFor="current_password" value="Current Password" />
-
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-6">
           <Input
             id="current_password"
-            ref={currentPasswordInput}
-            value={data.current_password}
-            onChange={(e) => setData("current_password", e.target.value)}
+            label="Current Password"
             type="password"
-            className="mt-1 block w-full"
-            autoComplete="current-password"
+            placeholder="Current Password"
+            validation={{
+              required: "Password is required",
+            }}
           />
-
-          <InputError message={errors.current_password} className="mt-2" />
-        </div>
-
-        <div>
-          <InputLabel htmlFor="password" value="New Password" />
 
           <Input
             id="password"
-            ref={passwordInput}
-            value={data.password}
-            onChange={(e) => setData("password", e.target.value)}
+            label="New Password"
             type="password"
-            className="mt-1 block w-full"
-            autoComplete="new-password"
-          />
-
-          <InputError message={errors.password} className="mt-2" />
-        </div>
-
-        <div>
-          <InputLabel
-            htmlFor="password_confirmation"
-            value="Confirm Password"
+            placeholder="Current Password"
+            validation={{
+              required: "Password is required",
+              pattern: {
+                value: REGEX.PASSWORD,
+                message:
+                  "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.",
+              },
+            }}
           />
 
           <Input
             id="password_confirmation"
-            value={data.password_confirmation}
-            onChange={(e) => setData("password_confirmation", e.target.value)}
+            label="Confirm Password"
             type="password"
-            className="mt-1 block w-full"
-            autoComplete="new-password"
+            placeholder="Confirm your password"
+            validation={{
+              required: "Password confirmation is required",
+              validate: (value) =>
+                value === methods.getValues("password") ||
+                "The passwords do not match",
+            }}
           />
 
-          <InputError message={errors.password_confirmation} className="mt-2" />
-        </div>
+          <div className="flex items-center gap-4">
+            <PrimaryButton type="submit" disabled={processing}>
+              Save
+            </PrimaryButton>
 
-        <div className="flex items-center gap-4">
-          <PrimaryButton disabled={processing}>Save</PrimaryButton>
-
-          <Transition
-            show={recentlySuccessful}
-            enter="transition ease-in-out"
-            enterFrom="opacity-0"
-            leave="transition ease-in-out"
-            leaveTo="opacity-0"
-          >
-            <p className="text-sm text-gray-600">Saved.</p>
-          </Transition>
-        </div>
-      </form>
+            <Transition
+              show={recentlySuccessful}
+              enter="transition ease-in-out"
+              enterFrom="opacity-0"
+              leave="transition ease-in-out"
+              leaveTo="opacity-0"
+            >
+              <p className="text-sm text-gray-600">Saved.</p>
+            </Transition>
+          </div>
+        </form>
+      </FormProvider>
     </section>
   );
 }
