@@ -2,10 +2,15 @@ import Button from "@/Components/Button";
 import ButtonLink from "@/Components/ButtonLink";
 import DropzoneInput from "@/Components/Forms/DropzoneInput";
 import Input from "@/Components/Forms/Input";
+import SearchableSelectInput from "@/Components/Forms/SelectInput";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { toBase64 } from "@/Lib/image";
+import { PredictionType } from "@/types/entities/roboflow";
 import { Head, useForm as useFormInertia } from "@inertiajs/react";
+import axios from "axios";
 import { ArrowLeft } from "lucide-react";
+import * as React from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
 type FormData = {
@@ -15,17 +20,23 @@ type FormData = {
   stock: number;
   categories: number[];
   city: string;
-  image_url: File | null;
+  image_url: File[] | null;
 };
 
-export default function Create() {
-  // const [categories, setCategories] = useState<number[]>([]);
+export default function Create({
+  options,
+}: {
+  options: { value: string; label: string }[];
+}) {
+  const [isDropped, setIsDropped] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const methods = useForm<FormData>({
     mode: "onTouched",
   });
 
-  const { handleSubmit, reset, getValues } = methods;
+  const { handleSubmit, reset, getValues, watch, setValue, clearErrors } =
+    methods;
 
   const { post, processing, transform } = useFormInertia<Omit<FormData, "id">>({
     name: "",
@@ -37,52 +48,45 @@ export default function Create() {
     image_url: null,
   });
 
-  // const file = watch("image_url");
+  const image_url = watch("image_url");
 
-  // useEffect(() => {
-  //   console.log(file);
-  //   if (file && file instanceof File) {
-  //     const reader = new FileReader();
-  //     reader.onload = (event) => {
-  //       const base64Image = event.target?.result?.toString().split(",")[1];
+  React.useEffect(() => {
+    const fetchPredictionData = async () => {
+      if (!isDropped || !image_url) return;
 
-  //       if (base64Image) {
-  //         axios<{ predictions: { class_id: number }[] }>({
-  //           method: "POST",
-  //           url: process.env.ROBOFLOW_API_URL || "",
-  //           params: {
-  //             api_key: process.env.ROBOFLOW_API_KEY,
-  //           },
-  //           data: base64Image,
-  //           headers: {
-  //             "Content-Type": "application/x-www-form-urlencoded",
-  //           },
-  //         })
-  //           .then((response) => {
-  //             const predictions = response.data.predictions || [];
-  //             const newCategories = predictions.map(
-  //               (prediction) => prediction.class_id + 1
-  //             );
-  //             setCategories(newCategories);
-  //           })
-  //           .catch((error) => {
-  //             console.error("Error processing image:", error.message);
-  //           });
-  //       } else {
-  //         console.error("Failed to read image file");
-  //       }
-  //     };
-  //     reader.onerror = (error) => {
-  //       console.error("Error reading file:", error);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // }, [file]);
+      setIsLoading(true);
+
+      try {
+        const response = await axios<PredictionType>({
+          method: "POST",
+          url: process.env.ROBOFLOW_API_URL || "",
+          params: {
+            api_key: process.env.ROBOFLOW_API_KEY || "",
+          },
+          data: await toBase64(image_url[0]),
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        });
+
+        const newCategories = response.data.predictions.map(
+          (category) => (category.class_id as number) + 1,
+        );
+        setValue("categories", newCategories);
+        clearErrors("categories");
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPredictionData();
+  }, [isDropped, image_url]);
 
   transform((data) => ({
     ...data,
     ...getValues(),
-    // categories,
   }));
 
   const onSubmit: SubmitHandler<FormData> = () => {
@@ -163,11 +167,22 @@ export default function Create() {
               <DropzoneInput
                 id="image_url"
                 label="Image"
+                setIsDropped={setIsDropped}
                 validation={{
                   required: "Image is required",
                 }}
               />
-              {/* <p>Categories: {JSON.stringify(categories)}</p> */}
+              <SearchableSelectInput
+                id="categories"
+                label="Categories"
+                placeholder="Select Category"
+                options={options}
+                isMulti
+                validation={{
+                  required: "Category is required",
+                }}
+                disabled={isLoading || !isDropped}
+              />
               <Button type="submit" disabled={processing}>
                 Submit
               </Button>

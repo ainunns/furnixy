@@ -4,36 +4,56 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Http\Requests\ProductRequest;
+use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
     public function create()
     {
-        return Inertia::render('Product/Create');
+        $options = Category::all()->map(function ($category) {
+            return [
+                'value' => $category->id,
+                'label' => $category->name,
+            ];
+        });
+
+        return Inertia::render('Product/Create', compact('options'));
     }
 
     public function store(ProductRequest $request): RedirectResponse
     {
-        $product = new Product;
+        DB::beginTransaction();
+        try {
 
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->stock = $request->stock;
-        $product->rating = 0.0;
-        $product->city = $request->city;
-        $product->category_id = 1;
+            $product = new Product;
+            
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->price = $request->price;
+            $product->stock = $request->stock;
+            $product->rating = 0.0;
+            $product->city = $request->city;
 
-        if ($request->hasFile('image_url')) {
-            $product->image_url = $request->file('image_url')[0]->store('images', 'public');
+            if ($request->hasFile('image_url')) {
+                $product->image_url = $request->file('image_url')[0]->store('images', 'public');
+                $product->save();
+            }
+            
+            $categoryIds = $request->input('categories');
+            $product->category()->attach($categoryIds);
+             
+            DB::commit();
+            
+            return redirect()->intended(route('product.show', $product->id));
+        } catch (\Exception $e) {
+            // Rollback in case of error
+            DB::rollBack();
+            throw $e;
         }
-
-        $product->save();
-
-        return redirect()->intended(route('product.show', $product->id));
     }
 
     public function edit(string $id) {
@@ -63,6 +83,7 @@ class ProductController extends Controller
 
         return redirect()->intended(route('product.show', $id));
     }
+
     public function index() {
         $product = Product::all();
 

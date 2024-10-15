@@ -16,6 +16,7 @@ type DropzoneInputProps = {
   readOnly?: boolean;
   hideError?: boolean;
   validation?: Record<string, unknown>;
+  setIsDropped: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function DropzoneInput({
@@ -26,6 +27,7 @@ export default function DropzoneInput({
   validation,
   readOnly,
   hideError = false,
+  setIsDropped,
 }: DropzoneInputProps) {
   const {
     control,
@@ -63,6 +65,8 @@ export default function DropzoneInput({
           type: "manual",
           message: rejectedFiles && rejectedFiles[0].errors[0].message,
         });
+
+        setIsDropped(false);
       } else {
         const acceptedFilesPreview = acceptedFiles.map((file: T) =>
           Object.assign(file, {
@@ -86,6 +90,8 @@ export default function DropzoneInput({
           },
         );
         clearErrors(id);
+
+        setIsDropped(true);
       }
     },
     [clearErrors, files, id, maxFiles, setError, setValue],
@@ -123,6 +129,8 @@ export default function DropzoneInput({
         shouldTouch: true,
       });
     }
+
+    setIsDropped(false);
   };
 
   const { getRootProps, getInputProps } = useDropzone({

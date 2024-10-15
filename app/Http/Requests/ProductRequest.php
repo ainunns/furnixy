@@ -29,6 +29,8 @@ class ProductRequest extends FormRequest
             'stock' => ['required', 'integer'],
             'image_url' => ['required'],
             'city'  => ['required', 'string'],
+            'categories' => ['required', 'array'],
+            'categories.*' => ['required', 'exists:categories,id'],
         ];
     }
 }
