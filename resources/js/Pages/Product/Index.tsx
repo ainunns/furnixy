@@ -52,6 +52,10 @@ const ProductIndex = () => {
               <Typography variant="s1">
                 <span className="font-semibold">City:</span> {p.city}
               </Typography>
+              <Typography variant="s1">
+                <span className="font-semibold">Category:</span>{" "}
+                {p.category.map((category) => category.name).join(", ")}
+              </Typography>
             </Link>
           ))}
         </div>

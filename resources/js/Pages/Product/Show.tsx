@@ -53,6 +53,12 @@ export default function Show({ product }: { product: ProductType }) {
               <Typography variant="s1">City</Typography>
               <Typography variant="s1">: {product.city}</Typography>
             </div>
+            <div className="grid grid-cols-2 w-full md:w-3/5">
+              <Typography variant="s1">Category</Typography>
+              <Typography variant="s1">
+                : {product.category.map((category) => category.name).join(", ")}
+              </Typography>
+            </div>
           </div>
         </div>
         <div className="mt-4 flex items-center flex-col gap-2">

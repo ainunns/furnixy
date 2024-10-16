@@ -85,15 +85,19 @@ class ProductController extends Controller
     }
 
     public function index() {
-        $product = Product::all();
+        $product = Product::with('category')->get();
 
-        return Inertia::render('Product/Index', compact('product'));
+        return Inertia::render('Product/Index', [
+            'product' => $product
+        ]);
     }
 
     public function show(string $id) {
-        $product = Product::findOrFail($id);
+        $product = Product::with('category')->findOrFail($id);
 
-        return Inertia::render('Product/Show', compact('product'));
+        return Inertia::render('Product/Show', [
+            'product' => $product
+        ]);
     }
 
     public function destroy(string $id) {
