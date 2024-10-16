@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -32,6 +33,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('product.edit');
         Route::post('/{product}/update', [ProductController::class, 'update'])->name('product.update');
         Route::delete('/{product}/delete', [ProductController::class, 'destroy'])->name('product.destroy');
+    });
+
+    Route::prefix('/cart')->group(function() {
+        Route::get('/', [CartController::class, 'viewCart'])->name('cart.index');
+        Route::post('/add/{product}', [CartController::class, 'addToCart'])->name('cart.add');
     });
 });
 

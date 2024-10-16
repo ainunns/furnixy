@@ -1,11 +1,18 @@
 import Button from "@/Components/Button";
 import ButtonLink from "@/Components/ButtonLink";
+import Input from "@/Components/Forms/Input";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductType } from "@/types/entities/product";
 import { Inertia } from "@inertiajs/inertia";
-import { Head } from "@inertiajs/react";
+import { Head, useForm as useFormInertia } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+
+type FormData = {
+  product_id: string;
+  quantity: number;
+};
 
 export default function Show({ product }: { product: ProductType }) {
   const handleDelete = () => {
@@ -17,6 +24,29 @@ export default function Show({ product }: { product: ProductType }) {
       });
     }
   };
+
+  const methods = useForm<FormData>({
+    mode: "onTouched",
+  });
+
+  const { handleSubmit, reset, getValues } = methods;
+
+  const { post, processing, transform } = useFormInertia<FormData>({
+    product_id: product.id,
+    quantity: 0,
+  });
+
+  transform((data) => ({
+    ...data,
+    ...getValues(),
+  }));
+
+  const onSubmit: SubmitHandler<FormData> = () => {
+    post(route("cart.add", product.id), {
+      onFinish: () => reset(),
+    });
+  };
+
   return (
     <AuthenticatedLayout>
       <Head title="Detail Product" />
@@ -65,13 +95,36 @@ export default function Show({ product }: { product: ProductType }) {
           <ButtonLink
             href={route("product.edit", product.id)}
             openNewTab={false}
-            className="flex w-3/5"
+            className="flex w-full md:w-3/5"
           >
             Edit Product
           </ButtonLink>
-          <Button onClick={handleDelete} className="flex w-3/5">
+          <Button onClick={handleDelete} className="flex w-full md:w-3/5">
             Delete Product
-          </Button>
+          </Button>{" "}
+        </div>
+        <div>
+          <Typography>Add to Cart</Typography>
+          <FormProvider {...methods}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Input
+                id="quantity"
+                name="quantity"
+                label="Quantity"
+                type="number"
+                validation={{
+                  required: "Quantity is required",
+                }}
+              />
+              <Button
+                type="submit"
+                disabled={processing}
+                className="flex w-full md:w-3/5"
+              >
+                Submit
+              </Button>
+            </form>
+          </FormProvider>
         </div>
       </div>
     </AuthenticatedLayout>
