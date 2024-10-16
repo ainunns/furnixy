@@ -1,12 +1,9 @@
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { CartType } from "@/types/entities/cart";
-import { usePage } from "@inertiajs/react";
 import { Head } from "@inertiajs/react";
 
-const CartIndex = () => {
-  const { cart } = usePage().props as unknown as { cart: CartType[] };
-
+const CartIndex = ({ cart }: { cart: CartType[] }) => {
   return (
     <AuthenticatedLayout>
       <Head title="Cart" />
@@ -16,21 +13,29 @@ const CartIndex = () => {
             Cart
           </Typography>
         </div>
-        <div className="grid grid-cols-2">
-          <Typography className="font-bold">Product Name</Typography>
-          <Typography className="font-bold">Quantity</Typography>
-        </div>
-        <div className="grid grid-cols-2">
-          <div className="flex flex-col">
-            {cart.map((c) => (
-              <Typography variant="s1">{c.product.name}</Typography>
-            ))}
-          </div>
-          <div className="flex flex-col">
-            {cart.map((c) => (
-              <Typography variant="s1">{c.quantity}</Typography>
-            ))}
-          </div>
+        <div className="grid grid-cols-4 mt-6 gap-y-4 gap-x-2">
+          <Typography variant="h2">Product Name</Typography>
+          <Typography variant="h2">Quantity</Typography>
+          <Typography variant="h2">Price</Typography>
+          <Typography variant="h2">Total Price</Typography>
+          {cart.map((c) => (
+            <>
+              <Typography variant="s2">{c.product.name}</Typography>
+              <Typography variant="s2">{c.quantity}</Typography>
+              <Typography variant="s2">{c.product.price}</Typography>
+              <Typography variant="s2">
+                {c.quantity * c.product.price}
+              </Typography>
+            </>
+          ))}
+          <div></div>
+          <div></div>
+          <Typography variant="h3" className="font-medium">
+            Total Price:
+          </Typography>
+          <Typography variant="h3" className="font-normal">
+            {cart.reduce((acc, c) => acc + c.quantity * c.product.price, 0)}
+          </Typography>
         </div>
       </div>
     </AuthenticatedLayout>
