@@ -9,7 +9,7 @@ const CartIndex = () => {
 
   return (
     <AuthenticatedLayout>
-      <Head title="All Product" />
+      <Head title="Cart" />
       <div className="px-10 md:px-20 py-8">
         <div className="flex justify-between">
           <Typography variant="h1" className="font-semibold mb-4">
