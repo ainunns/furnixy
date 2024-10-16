@@ -2,17 +2,49 @@ import ButtonLink from "@/Components/ButtonLink";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/Lib/utils";
+import { CategoryType } from "@/types/entities/category";
 import { ProductType } from "@/types/entities/product";
 import { Link } from "@inertiajs/react";
 import { Head } from "@inertiajs/react";
 import { Plus, Search, XCircle } from "lucide-react";
 import * as React from "react";
+import PopupFilter, { PopupFilterProps } from "./Components/PopupFilter";
 
-const ProductIndex = ({ product }: { product: ProductType[] }) => {
+type CategoryFilter = {
+  category: string[];
+};
+
+const ProductIndex = ({
+  product,
+  category,
+}: {
+  product: ProductType[];
+  category: CategoryType[];
+}) => {
   const [filter, setFilter] = React.useState<string>("");
-  const productList = product.filter((p) =>
-    p.name.toLowerCase().includes(filter.toLowerCase()),
-  );
+  const [filterQuery, setFilterQuery] = React.useState<CategoryFilter>({
+    category: [],
+  });
+
+  const filterOption: PopupFilterProps<CategoryFilter>["filterOption"] =
+    React.useMemo(
+      () => [
+        {
+          id: "category",
+          name: "Category",
+          options: category,
+        },
+      ],
+      [],
+    );
+
+  const productList = product.filter((p) => {
+    const matchesText = p.name.toLowerCase().includes(filter.toLowerCase());
+    const matchesCategory =
+      filterQuery.category.length === 0 ||
+      p.category.some((c) => filterQuery.category.includes(c.id.toString()));
+    return matchesText && matchesCategory;
+  });
 
   return (
     <AuthenticatedLayout>
@@ -51,13 +83,19 @@ const ProductIndex = ({ product }: { product: ProductType[] }) => {
               </div>
             )}
           </div>
-          <ButtonLink
-            href={route("product.create")}
-            openNewTab={false}
-            leftIcon={Plus}
-          >
-            Add Product
-          </ButtonLink>
+          <div className="flex gap-2">
+            <PopupFilter
+              filterOption={filterOption}
+              setFilterQuery={setFilterQuery}
+            />
+            <ButtonLink
+              href={route("product.create")}
+              openNewTab={false}
+              leftIcon={Plus}
+            >
+              Add Product
+            </ButtonLink>
+          </div>
         </div>
         <div className="grid md:grid-cols-4 gap-4">
           {productList.map((p) => (

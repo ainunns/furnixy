@@ -95,9 +95,11 @@ public function update(ProductRequest $request, Product $product): RedirectRespo
 
     public function index() {
         $product = Product::with('category')->get();
+        $category = Category::all();
 
         return Inertia::render('Product/Index', [
-            'product' => $product
+            'product' => $product,
+            'category' => $category
         ]);
     }
 
