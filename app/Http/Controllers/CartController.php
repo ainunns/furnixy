@@ -13,7 +13,7 @@ use App\Models\User;
 class CartController extends Controller
 {
     public function viewCart() {
-        $cart = Cart::all();
+        $cart = CartProduct::with('product')->get();
         return Inertia::render('Cart/Index', compact('cart'));
     }
 

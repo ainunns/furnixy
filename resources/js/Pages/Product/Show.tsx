@@ -103,10 +103,15 @@ export default function Show({ product }: { product: ProductType }) {
             Delete Product
           </Button>{" "}
         </div>
-        <div>
-          <Typography>Add to Cart</Typography>
+        <div className="flex items-center justify-center flex-col gap-2 mt-4">
+          <Typography variant="s1" className="font-semibold">
+            Add to Cart
+          </Typography>
           <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="gap-2 flex flex-col w-full md:w-3/5"
+            >
               <Input
                 id="quantity"
                 name="quantity"
@@ -119,7 +124,7 @@ export default function Show({ product }: { product: ProductType }) {
               <Button
                 type="submit"
                 disabled={processing}
-                className="flex w-full md:w-3/5"
+                className="flex w-full"
               >
                 Submit
               </Button>
