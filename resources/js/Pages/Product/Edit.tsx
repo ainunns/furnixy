@@ -1,7 +1,7 @@
 import Button from "@/Components/Button";
 import ButtonLink from "@/Components/ButtonLink";
-import DropzoneInput from "@/Components/Forms/DropzoneInput";
 import Input from "@/Components/Forms/Input";
+import SearchableSelectInput from "@/Components/Forms/SelectInput";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductType } from "@/types/entities/product";
@@ -14,14 +14,17 @@ type FormData = {
   description: string;
   price: number;
   stock: number;
-  categories: number[];
   city: string;
-  image_url: string | File | Blob | null;
+  categories: number[];
 };
 
-export default function Edit({ product }: { product: ProductType }) {
-  // const [categories, setCategories] = useState<number[]>([]);
-
+export default function Edit({
+  product,
+  options,
+}: {
+  product: ProductType;
+  options: { value: string; label: string }[];
+}) {
   const methods = useForm<FormData>({
     mode: "onTouched",
     defaultValues: {
@@ -29,84 +32,28 @@ export default function Edit({ product }: { product: ProductType }) {
       description: product.description,
       price: product.price,
       stock: product.stock,
-      // categories: product.categories.map((category) => category.id),
       city: product.city,
-      image_url: null,
+      categories: product.category.map((item) => item.id),
     },
   });
 
   const { handleSubmit, reset, getValues } = methods;
 
   const { post, processing, transform } = useFormInertia<
-    Omit<ProductType, "id">
+    Omit<ProductType, "id" | "image_url">
   >({
     name: product.name,
     description: product.description,
     price: product.price,
     stock: product.stock,
-    categories: [],
+    category: product.category,
     city: product.city,
-    image_url: product.image_url,
   });
 
-  // const file = watch("image_url");
-
-  // React.useEffect(() => {
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = (event) => {
-  //       const base64Image = event.target?.result?.toString().split(",")[1];
-
-  //       if (base64Image) {
-  //         axios<PredictionType>({
-  //           method: "POST",
-  //           url: process.env.ROBOFLOW_API_URL,
-  //           params: {
-  //             api_key: process.env.ROBOFLOW_API_KEY,
-  //           },
-  //           data: base64Image,
-  //           headers: {
-  //             "Content-Type": "application/x-www-form-urlencoded",
-  //           },
-  //         })
-  //           .then(function (response) {
-  //             const predictions = response.data.predictions || [];
-  //             const newCategories = predictions.map(
-  //               (prediction) => prediction.class_id + 1
-  //             );
-  //             setCategories(newCategories);
-  //           })
-  //           .catch(function (error) {
-  //             console.error(error.message);
-  //           });
-  //       } else {
-  //         console.error("Failed to read image file");
-  //       }
-  //     };
-  //     reader.onerror = (error) => {
-  //       console.error("Error reading file:", error);
-  //     };
-  //     if (file instanceof Blob) {
-  //       reader.readAsDataURL(file);
-  //     } else {
-  //       console.error("File is not a Blob");
-  //     }
-  //   }
-  // }, [file]);
-
-  transform((data) => {
-    const newData = getValues();
-
-    data.name = newData.name;
-    data.description = newData.description;
-    data.price = newData.price;
-    data.stock = newData.stock;
-    data.categories = newData.categories;
-    data.city = newData.city;
-    data.image_url = newData.image_url;
-
-    return data;
-  });
+  transform((data) => ({
+    ...data,
+    ...getValues(),
+  }));
 
   const onSubmit: SubmitHandler<FormData> = () => {
     post(route("product.update", product.id), {
@@ -142,7 +89,6 @@ export default function Edit({ product }: { product: ProductType }) {
                   required: "Name is required",
                 }}
               />
-
               <Input
                 id="description"
                 name="description"
@@ -151,7 +97,6 @@ export default function Edit({ product }: { product: ProductType }) {
                   required: "Description is required",
                 }}
               />
-
               <Input
                 id="price"
                 name="price"
@@ -165,7 +110,6 @@ export default function Edit({ product }: { product: ProductType }) {
                   },
                 }}
               />
-
               <Input
                 id="stock"
                 name="stock"
@@ -179,7 +123,6 @@ export default function Edit({ product }: { product: ProductType }) {
                   },
                 }}
               />
-
               <Input
                 id="city"
                 name="city"
@@ -188,17 +131,16 @@ export default function Edit({ product }: { product: ProductType }) {
                   required: "City is required",
                 }}
               />
-
-              <DropzoneInput
-                id="image_url"
-                label="Image"
+              <SearchableSelectInput
+                id="categories"
+                label="Categories"
+                placeholder="Select Category"
+                options={options}
+                isMulti
                 validation={{
-                  required: "Image is required",
+                  required: "Category is required",
                 }}
               />
-
-              {/* <p>{JSON.stringify(categories, null, 2)}</p> */}
-
               <Button type="submit" disabled={processing}>
                 Submit
               </Button>
