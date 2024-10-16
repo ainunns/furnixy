@@ -1,22 +1,56 @@
 import ButtonLink from "@/Components/ButtonLink";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { cn } from "@/Lib/utils";
 import { ProductType } from "@/types/entities/product";
-import { Link, usePage } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 import { Head } from "@inertiajs/react";
-import { Plus } from "lucide-react";
+import { Plus, Search, XCircle } from "lucide-react";
+import * as React from "react";
 
-const ProductIndex = () => {
-  const { product } = usePage().props as unknown as { product: ProductType[] };
+const ProductIndex = ({ product }: { product: ProductType[] }) => {
+  const [filter, setFilter] = React.useState<string>("");
+  const productList = product.filter((p) =>
+    p.name.toLowerCase().includes(filter.toLowerCase()),
+  );
 
   return (
     <AuthenticatedLayout>
       <Head title="All Product" />
-      <div className="px-10 md:px-20 py-8">
-        <div className="flex justify-between">
-          <Typography variant="h1" className="font-semibold mb-4">
-            All Product
-          </Typography>
+      <div className="px-10 md:px-20 py-8 flex flex-col gap-4">
+        <Typography variant="h1" className="font-semibold">
+          All Product
+        </Typography>
+        <div className="flex justify-between mt-6">
+          <div className="relative mt-1 self-start">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Search className="text-xl text-typo" />
+            </div>
+            <input
+              type="text"
+              value={filter ?? ""}
+              onChange={(e) => {
+                setFilter(String(e.target.value));
+              }}
+              className={cn(
+                "flex w-full rounded-lg shadow-sm",
+                "min-h-[2.25rem] py-0 px-10 md:min-h-[2.5rem]",
+                "border-gray-300 focus:border-primary-500 focus:ring-primary-500",
+              )}
+              placeholder="Search..."
+            />
+            {filter !== "" && (
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <button
+                  type="button"
+                  onClick={() => setFilter("")}
+                  className="p-1"
+                >
+                  <XCircle className="text-xl text-typo-icons" />
+                </button>
+              </div>
+            )}
+          </div>
           <ButtonLink
             href={route("product.create")}
             openNewTab={false}
@@ -25,8 +59,8 @@ const ProductIndex = () => {
             Add Product
           </ButtonLink>
         </div>
-        <div className="grid md:grid-cols-4 gap-4 mt-4">
-          {product.map((p) => (
+        <div className="grid md:grid-cols-4 gap-4">
+          {productList.map((p) => (
             <Link
               href={route("product.show", p.id)}
               key={p.id}
