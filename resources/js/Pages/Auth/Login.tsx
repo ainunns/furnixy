@@ -4,6 +4,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm as useFormInertia } from "@inertiajs/react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   email: string;
@@ -41,6 +42,13 @@ export default function Login({
 
   const onSubmit: SubmitHandler<FormData> = () => {
     post(route("login"), {
+      onSuccess: () => toast.success("You have been successfully logged in."),
+      onError: (errors) =>
+        Object.entries(errors).forEach(([_, value]) => {
+          toast.error("Error logging in", {
+            description: value[0],
+          });
+        }),
       onFinish: () => reset(),
     });
   };

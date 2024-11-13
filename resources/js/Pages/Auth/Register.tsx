@@ -4,6 +4,7 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { REGEX } from "@/Lib/regex";
 import { Head, Link, useForm as useFormInertia } from "@inertiajs/react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   name: string;
@@ -39,6 +40,13 @@ export default function Register() {
 
   const onSubmit: SubmitHandler<FormData> = () => {
     post(route("register"), {
+      onSuccess: () => toast.success("Your account has been created."),
+      onError: (errors) =>
+        Object.entries(errors).forEach(([_, value]) => {
+          toast.error("Error creating account", {
+            description: value[0],
+          });
+        }),
       onFinish: () => reset(),
     });
   };

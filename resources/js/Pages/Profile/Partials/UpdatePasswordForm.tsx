@@ -4,6 +4,7 @@ import { REGEX } from "@/Lib/regex";
 import { Transition } from "@headlessui/react";
 import { useForm as useFormInertia } from "@inertiajs/react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   current_password: string;
@@ -41,7 +42,16 @@ export default function UpdatePasswordForm({
   const onSubmit: SubmitHandler<FormData> = () => {
     put(route("password.update"), {
       preserveScroll: true,
-      onSuccess: () => reset(),
+      onSuccess: () => {
+        toast.success("Password successfully updated.");
+        reset();
+      },
+      onError: (errors) =>
+        Object.entries(errors).forEach(([_, value]) => {
+          toast.error("Error updating password", {
+            description: value[0],
+          });
+        }),
     });
   };
 

@@ -5,6 +5,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import { useForm as useFormInertia } from "@inertiajs/react";
 import { useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   passsword: string;
@@ -45,19 +46,23 @@ export default function DeleteUserForm({
   const onSubmit: SubmitHandler<FormData> = () => {
     destroy(route("profile.destroy"), {
       preserveScroll: true,
-      onSuccess: () => closeModal(),
-      onError: () =>
+      onSuccess: () => {
+        toast.success("Your account has been successfully deleted.");
+        closeModal();
+      },
+      onError: () => {
+        toast.error("An error occurred while deleting your account.");
         setError("passsword", {
           type: "manual",
           message: "The provided password was incorrect.",
-        }),
+        });
+      },
       onFinish: () => reset(),
     });
   };
 
   const closeModal = () => {
     setConfirmingUserDeletion(false);
-
     reset();
   };
 

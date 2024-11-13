@@ -4,6 +4,7 @@ import { REGEX } from "@/Lib/regex";
 import { Transition } from "@headlessui/react";
 import { Link, useForm as useFormInertia, usePage } from "@inertiajs/react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   name: string;
@@ -55,7 +56,16 @@ export default function UpdateProfileInformation({
   });
 
   const onSubmit: SubmitHandler<FormData> = () => {
-    patch(route("profile.update"));
+    patch(route("profile.update"), {
+      onSuccess: () =>
+        toast.success("Profile information successfully updated."),
+      onError: (errors) =>
+        Object.entries(errors).forEach(([_, value]) => {
+          toast.error("Error updating profile information", {
+            description: value[0],
+          });
+        }),
+    });
   };
 
   return (

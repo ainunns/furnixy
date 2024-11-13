@@ -12,6 +12,7 @@ import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import * as React from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   name: string;
@@ -55,6 +56,9 @@ export default function Create({
       if (!isDropped || !image_url) return;
 
       setIsLoading(true);
+      toast.loading("Detecting image category...", {
+        id: "detecting-image-category",
+      });
 
       try {
         const response = await axios<PredictionType>({
@@ -74,9 +78,13 @@ export default function Create({
         );
         setValue("categories", newCategories);
         clearErrors("categories");
+
+        toast.success("Image category detected");
       } catch (error) {
+        toast.error("Error detecting image category");
         console.error(error);
       } finally {
+        toast.dismiss("detecting-image-category");
         setIsLoading(false);
       }
     };
@@ -92,6 +100,16 @@ export default function Create({
   const onSubmit: SubmitHandler<FormData> = () => {
     post(route("product.store"), {
       forceFormData: true,
+      onSuccess: () => {
+        toast.success("Product has been added successfully");
+      },
+      onError: (errors) => {
+        Object.entries(errors).forEach(([_, value]) => {
+          toast.error("Error adding product", {
+            description: value[0],
+          });
+        });
+      },
       onFinish: () => reset(),
     });
   };

@@ -3,6 +3,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, useForm as useFormInertia } from "@inertiajs/react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   password: string;
@@ -28,6 +29,13 @@ export default function ConfirmPassword() {
 
   const onSubmit: SubmitHandler<FormData> = () => {
     post(route("password.confirm"), {
+      onSuccess: () => toast.success("Password successfully confirmed."),
+      onError: (errors) =>
+        Object.entries(errors).forEach(([_, value]) => {
+          toast.error("Error confirming password", {
+            description: value[0],
+          });
+        }),
       onFinish: () => reset(),
     });
   };
