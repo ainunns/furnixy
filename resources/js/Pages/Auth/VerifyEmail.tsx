@@ -2,6 +2,7 @@ import PrimaryButton from "@/Components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm } from "@inertiajs/react";
 import type { FormEventHandler } from "react";
+import { toast } from "sonner";
 
 export default function VerifyEmail({ status }: { status?: string }) {
   const { post, processing } = useForm({});
@@ -9,7 +10,15 @@ export default function VerifyEmail({ status }: { status?: string }) {
   const submit: FormEventHandler = (e) => {
     e.preventDefault();
 
-    post(route("verification.send"));
+    post(route("verification.send"), {
+      onSuccess: () => toast.success("Verification email sent."),
+      onError: (errors) =>
+        Object.entries(errors).forEach(([_, value]) => {
+          toast.error("Error sending verification email", {
+            description: value[0],
+          });
+        }),
+    });
   };
 
   return (

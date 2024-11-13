@@ -8,6 +8,7 @@ import { ProductType } from "@/types/entities/product";
 import { Head, useForm as useFormInertia } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   name: string;
@@ -59,6 +60,13 @@ export default function Edit({
     post(route("product.update", product.id), {
       method: "patch",
       forceFormData: true,
+      onSuccess: () => toast.success("Product has been updated."),
+      onError: (errors) =>
+        Object.entries(errors).forEach(([_, value]) => {
+          toast.error("Error updating product", {
+            description: value[0],
+          });
+        }),
       onFinish: () => reset(),
     });
   };

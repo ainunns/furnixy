@@ -8,6 +8,7 @@ import { Inertia } from "@inertiajs/inertia";
 import { Head, useForm as useFormInertia } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   product_id: string;
@@ -18,9 +19,8 @@ export default function Show({ product }: { product: ProductType }) {
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this product?")) {
       Inertia.delete(`/product/${product.id}/delete`, {
-        onSuccess: () => {
-          alert("Product deleted successfully!");
-        },
+        onSuccess: () => toast.success("Product has been deleted."),
+        onError: () => toast.error("Error deleting product."),
       });
     }
   };

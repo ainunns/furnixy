@@ -4,6 +4,7 @@ import GuestLayout from "@/Layouts/GuestLayout";
 import { REGEX } from "@/Lib/regex";
 import { Head, useForm as useFormInertia } from "@inertiajs/react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 type FormData = {
   token: string;
@@ -51,6 +52,13 @@ export default function ResetPassword({
 
   const onSubmit: SubmitHandler<FormData> = () => {
     post(route("password.store"), {
+      onSuccess: () => toast.success("Password successfully reset."),
+      onError: (errors) =>
+        Object.entries(errors).forEach(([_, value]) => {
+          toast.error("Error resetting password", {
+            description: value[0],
+          });
+        }),
       onFinish: () => reset(),
     });
   };
