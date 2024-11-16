@@ -17,38 +17,38 @@ export default {
       },
       colors: {
         primary: {
-          50: "#F2F2FA",
+          50: "#F8E9DF",
           //* Background
-          100: "#E9E8F6",
-          200: "#E6E4FC",
+          100: "#E3CAB8",
+          200: "#CFAB92",
           //* Complement
-          300: "#DCD9FF",
-          400: "#C2BEFA",
+          300: "#BA8D6B",
+          400: "#A66E45",
           //* Default
-          500: "#4E46B4",
+          500: "#914F1E",
           //* Hovered
-          600: "#342BA8",
+          600: "#743F18",
           //* Active
-          700: "#20188A",
-          800: "#150E6D",
+          700: "#572F12",
+          800: "#1D1006",
           900: "#0C0750",
         },
         secondary: {
-          50: "#EFF9F8",
+          50: "#FDF8F1",
           //* Background
-          100: "#E8F4F3",
-          200: "#E0F3F1",
+          100: "#FDF5EA",
+          200: "#FCF1E3",
           //* Complement
-          300: "#D0EDEB",
-          400: "#A2DBD7",
+          300: "#FAEAD5",
+          400: "#F9E3C7",
           //* Default
-          500: "#40A69F",
+          500: "#F7DCB9",
           //* Hovered
-          600: "#3B9993",
+          600: "#DEBF97",
           //* Active
-          700: "#2F7A75",
-          800: "#235C58",
-          900: "#173D3A",
+          700: "#C5A275",
+          800: "#AC8552",
+          900: "#936830",
         },
         typo: {
           DEFAULT: "#1F1F1F",
