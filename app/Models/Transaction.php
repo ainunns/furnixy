@@ -9,10 +9,10 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['cart_id', 'total_price'];
+    protected $fillable = ['total_price'];
 
-    public function cart()
+    public function cart_product()
     {
-        return $this->belongsTo(Cart::class);
+        return $this->hasMany(CartProduct::class);
     }
 }
