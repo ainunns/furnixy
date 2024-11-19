@@ -17,7 +17,7 @@ type FormData = {
 export default function Show({ product }: { product: ProductType }) {
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this product?")) {
-      router.delete(`/product/${product.id}/delete`, {
+      router.delete(`/${product.id}/delete`, {
         onSuccess: () => toast.success("Product has been deleted."),
         onError: () => toast.error("Error deleting product."),
       });
@@ -54,7 +54,7 @@ export default function Show({ product }: { product: ProductType }) {
       <Head title="Detail Product" />
       <div className="px-10 md:px-10 py-8">
         <div>
-          <ButtonLink href="/product" leftIcon={ArrowLeft}>
+          <ButtonLink href="/" leftIcon={ArrowLeft}>
             Back
           </ButtonLink>
         </div>
