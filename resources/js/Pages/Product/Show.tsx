@@ -43,6 +43,9 @@ export default function Show({ product }: { product: ProductType }) {
   const onSubmit: SubmitHandler<FormData> = () => {
     post(route("cart.add", product.id), {
       onFinish: () => reset(),
+      onError: (errors) => {
+        toast.error(errors.message);
+      },
     });
   };
 
@@ -113,11 +116,16 @@ export default function Show({ product }: { product: ProductType }) {
             >
               <Input
                 id="quantity"
+                type="number"
                 name="quantity"
                 label="Quantity"
-                type="number"
+                placeholder="Input quantity"
                 validation={{
                   required: "Quantity is required",
+                  max: {
+                    value: product.stock,
+                    message: "Quantity must be less than or equal to stock",
+                  },
                 }}
               />
               <Button
