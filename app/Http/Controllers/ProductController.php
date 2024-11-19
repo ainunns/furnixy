@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -36,11 +37,9 @@ class ProductController extends Controller
             $product->stock = $request->stock;
             $product->rating = 0.0;
             $product->city = $request->city;
-
-            if ($request->hasFile('image_url')) {
-                $product->image_url = $request->file('image_url')[0]->store('images', 'public');
-                $product->save();
-            }
+            $product->image_url = $request->file('image_url')[0]->store('images', 'public');
+            
+            $product->save();
             
             $categoryIds = $request->input('categories');
             $product->category()->attach($categoryIds);
@@ -69,29 +68,29 @@ class ProductController extends Controller
         ]);
     }
 
-public function update(ProductRequest $request, Product $product): RedirectResponse
-{
-    DB::beginTransaction();
-    try {
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->stock = $request->stock;
-        $product->city = $request->city;
+    public function update(ProductRequest $request, Product $product): RedirectResponse
+    {
+        DB::beginTransaction();
+        try {
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->price = $request->price;
+            $product->stock = $request->stock;
+            $product->city = $request->city;
 
-        $product->save();
+            $product->save();
 
-        $categoryIds = $request->input('categories');
-        $product->category()->sync($categoryIds);
+            $categoryIds = $request->input('categories');
+            $product->category()->sync($categoryIds);
 
-        DB::commit();
+            DB::commit();
 
-        return redirect()->intended(route('product.show', $product->id));
-    } catch (\Exception $e) {
-        DB::rollBack();
-        throw $e;
+            return redirect()->intended(route('product.show', $product->id));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
-}
 
     public function index() {
         $product = Product::with('category')->get();
@@ -113,9 +112,12 @@ public function update(ProductRequest $request, Product $product): RedirectRespo
 
     public function destroy(string $id) {
         $product = Product::findOrFail($id);
+        if (Storage::disk('public')->exists($product->image_url)) {
+            Storage::disk('public')->delete($product->image_url);
+        }
         $product->delete();
 
-        return redirect()->route('product.index');
+        return redirect()->intended(route('product.index'));
     }
 
 }
