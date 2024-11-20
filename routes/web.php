@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('/cart')->group(function() {
         Route::get('/', [CartController::class, 'viewCart'])->name('cart.index');
         Route::post('/add/{product}', [CartController::class, 'addToCart'])->name('cart.add');
+        Route::delete('/{id}/delete', [CartController::class, 'deleteFromCart'])->name('cart.delete');
+        Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     });
 });
 

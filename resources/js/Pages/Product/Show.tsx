@@ -4,8 +4,7 @@ import Input from "@/Components/Forms/Input";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductType } from "@/types/entities/product";
-import { Inertia } from "@inertiajs/inertia";
-import { Head, useForm as useFormInertia } from "@inertiajs/react";
+import { Head, router, useForm as useFormInertia } from "@inertiajs/react";
 import { ArrowLeft } from "lucide-react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -18,7 +17,7 @@ type FormData = {
 export default function Show({ product }: { product: ProductType }) {
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this product?")) {
-      Inertia.delete(`/product/${product.id}/delete`, {
+      router.delete(`/product/${product.id}/delete`, {
         onSuccess: () => toast.success("Product has been deleted."),
         onError: () => toast.error("Error deleting product."),
       });
@@ -44,6 +43,9 @@ export default function Show({ product }: { product: ProductType }) {
   const onSubmit: SubmitHandler<FormData> = () => {
     post(route("cart.add", product.id), {
       onFinish: () => reset(),
+      onError: (errors) => {
+        toast.error(errors.message);
+      },
     });
   };
 
@@ -114,11 +116,16 @@ export default function Show({ product }: { product: ProductType }) {
             >
               <Input
                 id="quantity"
+                type="number"
                 name="quantity"
                 label="Quantity"
-                type="number"
+                placeholder="Input quantity"
                 validation={{
                   required: "Quantity is required",
+                  max: {
+                    value: product.stock,
+                    message: "Quantity must be less than or equal to stock",
+                  },
                 }}
               />
               <Button

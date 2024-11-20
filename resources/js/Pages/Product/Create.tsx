@@ -79,9 +79,15 @@ export default function Create({
         setValue("categories", newCategories);
         clearErrors("categories");
 
+        if (newCategories.length === 0) {
+          throw new Error("No category detected");
+        }
+
         toast.success("Image category detected");
       } catch (error) {
-        toast.error("Error detecting image category");
+        toast.error("Error detecting image category", {
+          description: error instanceof Error ? error.message : "Unknown error",
+        });
         console.error(error);
       } finally {
         toast.dismiss("detecting-image-category");
@@ -201,7 +207,7 @@ export default function Create({
                 }}
                 disabled={isLoading || !isDropped}
               />
-              <Button type="submit" disabled={processing}>
+              <Button type="submit" isLoading={processing}>
                 Submit
               </Button>
             </form>

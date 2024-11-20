@@ -149,7 +149,7 @@ export default function Edit({
                   required: "Category is required",
                 }}
               />
-              <Button type="submit" disabled={processing}>
+              <Button type="submit" isLoading={processing}>
                 Submit
               </Button>
             </form>

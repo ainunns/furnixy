@@ -13,7 +13,7 @@ enum CheckboxSize {
 
 export type CheckboxProps = {
   /** Input label */
-  label: string;
+  label?: string;
   name: string;
   /** Add value only if you're using grouped checkbox, omit value if using a single checkbox */
   value?: string | number;
@@ -71,17 +71,19 @@ export default function Checkbox({
           placeholder={placeholder}
           aria-describedby={name}
         />
-        <Typography
-          className={clsx((readOnly || disabled) && "cursor-not-allowed")}
-          as="label"
-          variant={
-            clsx([size === "base" && "b2", size === "sm" && "b3"]) as
-              | "b2"
-              | "b3"
-          }
-        >
-          {label}
-        </Typography>
+        {label && (
+          <Typography
+            className={clsx((readOnly || disabled) && "cursor-not-allowed")}
+            as="label"
+            variant={
+              clsx([size === "base" && "b2", size === "sm" && "b3"]) as
+                | "b2"
+                | "b3"
+            }
+          >
+            {label}
+          </Typography>
+        )}
       </div>
       {!hideError && error && (
         <ErrorMessage>{error?.message?.toString()}</ErrorMessage>
