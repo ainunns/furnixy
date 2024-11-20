@@ -1,6 +1,6 @@
 import { cn } from "@/Lib/utils";
 import { Loader2, LucideIcon } from "lucide-react";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import type { ButtonHTMLAttributes } from "react";
 import * as React from "react";
 
 const IconButtonVariant = [
@@ -35,7 +35,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       type = "button",
       ...rest
     },
-    ref
+    ref,
   ) => {
     const disabled = isLoading || buttonDisabled;
 
@@ -115,7 +115,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           "disabled:cursor-not-allowed",
           isLoading &&
             "relative text-transparent transition-none hover:text-transparent disabled:cursor-wait",
-          className
+          className,
         )}
       >
         {isLoading && (
@@ -132,7 +132,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         {Icon && <Icon size="1em" className={`text-base ${iconClassName}`} />}
       </button>
     );
-  }
+  },
 );
 
 export default IconButton;

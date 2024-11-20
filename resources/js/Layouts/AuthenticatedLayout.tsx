@@ -1,4 +1,3 @@
-import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
@@ -14,10 +13,12 @@ export default function Authenticated({
       user: {
         name: string;
         email: string;
+        role: string;
       };
     };
   };
   const user = auth.user;
+  const role = auth.user.role;
 
   const [showingNavigationDropdown, setShowingNavigationDropdown] =
     useState(false);
@@ -30,29 +31,31 @@ export default function Authenticated({
             <div className="flex">
               <div className="flex shrink-0 items-center">
                 <Link href="/">
-                  <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
+                  <img
+                    width="40"
+                    height="40"
+                    src="https://img.icons8.com/laces/100/f.png"
+                    alt="f"
+                  />
+                  {/* <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" /> */}
                 </Link>
               </div>
 
               <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                <NavLink
-                  href={route("dashboard")}
-                  active={route().current("dashboard")}
-                >
-                  Dashboard
-                </NavLink>
                 <NavLink
                   href={route("product.index")}
                   active={route().current("product.index")}
                 >
                   Product
                 </NavLink>
-                <NavLink
-                  href={route("cart.index")}
-                  active={route().current("cart.index")}
-                >
-                  Cart
-                </NavLink>
+                {role === "user" && (
+                  <NavLink
+                    href={route("cart.index")}
+                    active={route().current("cart.index")}
+                  >
+                    Cart
+                  </NavLink>
+                )}
               </div>
             </div>
 

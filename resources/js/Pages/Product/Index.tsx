@@ -1,12 +1,13 @@
+import Badge from "@/Components/Badge";
 import ButtonLink from "@/Components/ButtonLink";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/Lib/utils";
 import { CategoryType } from "@/types/entities/category";
 import { ProductType } from "@/types/entities/product";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { Head } from "@inertiajs/react";
-import { Plus, Search, XCircle } from "lucide-react";
+import { MapPin, Plus, Search, XCircle } from "lucide-react";
 import * as React from "react";
 import PopupFilter, { PopupFilterProps } from "./Components/PopupFilter";
 
@@ -45,6 +46,17 @@ const ProductIndex = ({
       p.category.some((c) => filterQuery.category.includes(c.id.toString()));
     return matchesText && matchesCategory;
   });
+
+  const { auth } = usePage().props as unknown as {
+    auth: {
+      user: {
+        name: string;
+        email: string;
+        role: string;
+      };
+    };
+  };
+  const role = auth.user.role;
 
   return (
     <AuthenticatedLayout>
@@ -88,13 +100,15 @@ const ProductIndex = ({
               filterOption={filterOption}
               setFilterQuery={setFilterQuery}
             />
-            <ButtonLink
-              href={route("product.create")}
-              openNewTab={false}
-              leftIcon={Plus}
-            >
-              Add Product
-            </ButtonLink>
+            {role === "admin" && (
+              <ButtonLink
+                href={route("product.create")}
+                openNewTab={false}
+                leftIcon={Plus}
+              >
+                Add Product
+              </ButtonLink>
+            )}
           </div>
         </div>
         <div className="grid md:grid-cols-4 gap-4">
@@ -102,32 +116,35 @@ const ProductIndex = ({
             <Link
               href={route("product.show", p.id)}
               key={p.id}
-              className="bg-white shadow-md rounded-lg p-4"
+              className="bg-white shadow-md rounded-lg p-4 flex flex-col gap-1"
             >
               <img
                 src={`/storage/${p.image_url}`}
                 alt={p.name}
                 className="w-full h-40 object-cover rounded-md mb-4"
               />
-              <Typography variant="h2" className="text-lg font-bold">
+              <Typography
+                variant="h2"
+                className="text-lg font-bold text-primary-500"
+              >
                 {p.name}
               </Typography>
               <Typography variant="s3" className="text-gray-600">
                 {p.description}
               </Typography>
-              <Typography variant="s1" className="mt-2">
-                <span className="font-semibold">Price:</span> Rp{p.price}
+              <Typography variant="s1" className="">
+                Rp{p.price}
               </Typography>
-              <Typography variant="s1">
-                <span className="font-semibold">Stock:</span> {p.stock}
-              </Typography>
-              <Typography variant="s1">
-                <span className="font-semibold">City:</span> {p.city}
-              </Typography>
-              <Typography variant="s1">
-                <span className="font-semibold">Category:</span>{" "}
-                {p.category.map((category) => category.name).join(", ")}
-              </Typography>
+              <Typography variant="b1">Stock: {p.stock}</Typography>
+              <div className="flex gap-2 items-center w-full">
+                <MapPin width="20px" height="20px" />
+                <Typography variant="b1">{p.city}</Typography>
+              </div>
+              <div className="flex">
+                <Badge>
+                  {p.category.map((category) => category.name).join(", ")}
+                </Badge>
+              </div>
             </Link>
           ))}
         </div>
