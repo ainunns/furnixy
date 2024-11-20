@@ -1,6 +1,7 @@
 import Button from "@/Components/Button";
 import Checkbox from "@/Components/Forms/Checkbox";
 import Typography from "@/Components/Typography";
+import UnstyledLink from "@/Components/UnstyledLink";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { numberToCurrency } from "@/Lib/utils";
 import { CartType } from "@/types/entities/cart";
@@ -101,14 +102,19 @@ const CartIndex = ({ cart }: { cart: CartType[] }) => {
                         className="size-20 lg:size-40 object-fit rounded"
                       />
                       <div className="flex flex-col gap-4 w-full">
-                        <Typography variant="h2" className="text-typo">
-                          {item.product.name}
-                        </Typography>
+                        <UnstyledLink href={`/product/${item.product.id}`}>
+                          <Typography variant="h2" className="text-typo">
+                            {item.product.name}
+                          </Typography>
+                        </UnstyledLink>
                         <Typography
                           variant="h4"
                           className="text-typo-secondary"
                         >
                           {numberToCurrency(item.product.price)}
+                        </Typography>
+                        <Typography variant="b2" className="text-typo ">
+                          Total: {item.quantity}
                         </Typography>
                       </div>
                     </div>
