@@ -207,7 +207,7 @@ export default function Create({
                 }}
                 disabled={isLoading || !isDropped}
               />
-              <Button type="submit" disabled={processing}>
+              <Button type="submit" isLoading={processing}>
                 Submit
               </Button>
             </form>

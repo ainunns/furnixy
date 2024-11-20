@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CartRequest;
 use App\Models\Product;
 use App\Models\CartProduct;
+use App\Models\Transaction;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -13,7 +15,7 @@ class CartController extends Controller
 {
     public function viewCart()
     {
-        $cart = CartProduct::with('product')->get();
+        $cart = CartProduct::with('product')->where([['user_id', '=', Auth::id()], ['transaction_id', '=', NULL]])->get();
         return Inertia::render('Cart/Index', compact('cart'));
     }
 
@@ -44,6 +46,66 @@ class CartController extends Controller
             DB::commit();
 
             return redirect()->intended(route('cart.index'));
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    function deleteFromCart(string $id)
+    {
+        $cart = CartProduct::findOrFail($id);
+        $cart->delete();
+
+        return redirect()->intended(route('cart.index'));
+    }
+
+    function checkout(Request $request)
+    {
+        $validatedCart = $request->validate([
+            'product_id' => 'required|array',
+            'product_id.*' => 'required|string|exists:cart_products,id',
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            $transaction = new Transaction;
+
+            $total_price = 0;
+            for($i = 0; $i < count($validatedCart['product_id']); $i++) {
+                $cartProduct = CartProduct::findOrFail($validatedCart['product_id'][$i]);
+
+                if (!$cartProduct) {
+                    DB::rollBack();
+                    return redirect()->back()->withErrors(['message' => 'Cart item not found']);
+                }
+
+                if ($cartProduct->quantity > $cartProduct->product->stock) {
+                    DB::rollBack();
+                    return redirect()->back()->withErrors(['message' => 'Number of items in cart exceeds the stock']);
+                }
+
+                $total_price += $cartProduct->product->price * $cartProduct->quantity;
+
+                $product = Product::findOrFail($cartProduct->product_id);
+                $product->stock -= $cartProduct->quantity;
+                $product->save();
+            }
+
+            $transaction->total_price = $total_price;
+            $transaction->save();
+
+            for($i = 0; $i < count($validatedCart['product_id']); $i++) {
+                $cartProduct = CartProduct::findOrFail($validatedCart['product_id'][$i]);
+
+                $cartProduct->transaction_id = $transaction->id;
+                $cartProduct->save();
+            }
+
+            DB::commit();
+
+            return redirect()->back();
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
