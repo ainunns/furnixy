@@ -1,11 +1,18 @@
+import Badge from "@/Components/Badge";
 import Button from "@/Components/Button";
 import ButtonLink from "@/Components/ButtonLink";
 import Input from "@/Components/Forms/Input";
+import IconButton from "@/Components/IconButton";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { ProductType } from "@/types/entities/product";
-import { Head, router, useForm as useFormInertia } from "@inertiajs/react";
-import { ArrowLeft } from "lucide-react";
+import {
+  Head,
+  router,
+  useForm as useFormInertia,
+  usePage,
+} from "@inertiajs/react";
+import { ArrowLeft, MapPin, ShoppingCart } from "lucide-react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -49,94 +56,114 @@ export default function Show({ product }: { product: ProductType }) {
     });
   };
 
+  const { auth } = usePage().props as unknown as {
+    auth: {
+      user: {
+        name: string;
+        email: string;
+        role: string;
+      };
+    };
+  };
+  const role = auth.user.role;
+
   return (
     <AuthenticatedLayout>
       <Head title="Detail Product" />
       <div className="px-10 md:px-10 py-8">
         <div>
-          <ButtonLink href="/product" leftIcon={ArrowLeft}>
+          <ButtonLink href="/" leftIcon={ArrowLeft}>
             Back
           </ButtonLink>
         </div>
         <div className="flex flex-col justify-center items-center mt-4">
-          <div className="flex flex-col gap-2 items-center w-full">
-            <img
-              src={`/storage/${product.image_url}`}
-              alt={product.name}
-              className="w-1/2 rounded-md mb-4"
-            />
-            <div className="grid grid-cols-2 w-full md:w-3/5">
-              <Typography variant="s1">Name</Typography>
-              <Typography variant="s1">: {product.name}</Typography>
+          <div className="flex flex-col md:flex-row gap-2 items-center w-full">
+            <div className="flex justify-center items-center">
+              <img
+                src={`/storage/${product.image_url}`}
+                alt={product.name}
+                className="w-1/2"
+              />
             </div>
-            <div className="grid grid-cols-2 w-full md:w-3/5">
-              <Typography variant="s1">Description</Typography>
-              <Typography variant="s1">: {product.description}</Typography>
-            </div>
-            <div className="grid grid-cols-2 w-full md:w-3/5">
-              <Typography variant="s1">Price</Typography>
-              <Typography variant="s1">: Rp{product.price}</Typography>
-            </div>
-            <div className="grid grid-cols-2 w-full md:w-3/5">
-              <Typography variant="s1">Stock</Typography>
-              <Typography variant="s1">: {product.stock}</Typography>
-            </div>
-            <div className="grid grid-cols-2 w-full md:w-3/5">
-              <Typography variant="s1">City</Typography>
-              <Typography variant="s1">: {product.city}</Typography>
-            </div>
-            <div className="grid grid-cols-2 w-full md:w-3/5">
-              <Typography variant="s1">Category</Typography>
-              <Typography variant="s1">
-                : {product.category.map((category) => category.name).join(", ")}
-              </Typography>
+            <div className="bg-white rounded-lg p-8 flex flex-col gap-1 w-full">
+              <div className="w-full">
+                <Typography variant="j2" className="text-primary-500">
+                  {product.name}
+                </Typography>
+              </div>
+              <div className="w-full">
+                <Typography variant="s1">Rp{product.price}</Typography>
+              </div>
+              <div className="w-full">
+                <Typography variant="b1" className="text-neutral-400">
+                  {product.description}
+                </Typography>
+              </div>
+              <div className="w-full">
+                <Typography variant="b1">Stock: {product.stock}</Typography>
+              </div>
+              <div className="flex gap-2 items-center w-full">
+                <MapPin width="20px" height="20px" />
+                <Typography variant="b1">{product.city}</Typography>
+              </div>
+              <div className="flex">
+                <Badge>
+                  {product.category.map((category) => category.name).join(", ")}
+                </Badge>
+              </div>
+              {role === "user" && (
+                <div className="flex items-center justify-center flex-col gap-2 mt-4">
+                  <FormProvider {...methods}>
+                    <form
+                      onSubmit={handleSubmit(onSubmit)}
+                      className="gap-2 flex flex-row items-end w-full"
+                    >
+                      <Input
+                        id="quantity"
+                        type="number"
+                        name="quantity"
+                        label="Quantity"
+                        placeholder="Input quantity"
+                        containerClassName="w-full"
+                        validation={{
+                          required: "Quantity is required",
+                          max: {
+                            value: product.stock,
+                            message:
+                              "Quantity must be less than or equal to stock",
+                          },
+                        }}
+                      />
+                      <IconButton
+                        type="submit"
+                        disabled={processing}
+                        className="w-fit h-fit"
+                        icon={ShoppingCart}
+                      />
+                    </form>
+                  </FormProvider>
+                </div>
+              )}
+              {role === "admin" && (
+                <div className="mt-4 flex items-center flex-row gap-2">
+                  <ButtonLink
+                    href={route("product.edit", product.id)}
+                    openNewTab={false}
+                    className="flex w-full"
+                  >
+                    Edit
+                  </ButtonLink>
+                  <Button
+                    onClick={handleDelete}
+                    className="flex w-full"
+                    variant="outline"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-        <div className="mt-4 flex items-center flex-col gap-2">
-          <ButtonLink
-            href={route("product.edit", product.id)}
-            openNewTab={false}
-            className="flex w-full md:w-3/5"
-          >
-            Edit Product
-          </ButtonLink>
-          <Button onClick={handleDelete} className="flex w-full md:w-3/5">
-            Delete Product
-          </Button>{" "}
-        </div>
-        <div className="flex items-center justify-center flex-col gap-2 mt-4">
-          <Typography variant="s1" className="font-semibold">
-            Add to Cart
-          </Typography>
-          <FormProvider {...methods}>
-            <form
-              onSubmit={handleSubmit(onSubmit)}
-              className="gap-2 flex flex-col w-full md:w-3/5"
-            >
-              <Input
-                id="quantity"
-                type="number"
-                name="quantity"
-                label="Quantity"
-                placeholder="Input quantity"
-                validation={{
-                  required: "Quantity is required",
-                  max: {
-                    value: product.stock,
-                    message: "Quantity must be less than or equal to stock",
-                  },
-                }}
-              />
-              <Button
-                type="submit"
-                disabled={processing}
-                className="flex w-full"
-              >
-                Submit
-              </Button>
-            </form>
-          </FormProvider>
         </div>
       </div>
     </AuthenticatedLayout>

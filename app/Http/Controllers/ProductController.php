@@ -101,15 +101,16 @@ class ProductController extends Controller
             'category' => $category
         ]);
     }
-
+    
     public function show(string $id) {
         $product = Product::with('category')->findOrFail($id);
-
+        
         return Inertia::render('Product/Show', [
             'product' => $product
         ]);
     }
 
+    
     public function destroy(string $id) {
         $product = Product::findOrFail($id);
         if (Storage::disk('public')->exists($product->image_url)) {
