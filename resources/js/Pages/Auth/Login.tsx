@@ -1,5 +1,7 @@
 import Input from "@/Components/Forms/Input";
 import PrimaryButton from "@/Components/PrimaryButton";
+import Typography from "@/Components/Typography";
+import UnstyledLink from "@/Components/UnstyledLink";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, Link, useForm as useFormInertia } from "@inertiajs/react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
@@ -81,12 +83,17 @@ export default function Login({
               required: "Password is required",
             }}
           />
-          <Link
-            href={route("register")}
-            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Don't have an account?
-          </Link>
+          <Typography className="text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            Don't have an account?{" "}
+            <span>
+              <UnstyledLink
+                href={route("register")}
+                className="underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Register
+              </UnstyledLink>
+            </span>
+          </Typography>
 
           <div className="mt-4 flex items-center justify-end">
             {canResetPassword && (
