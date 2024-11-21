@@ -62,7 +62,7 @@ export default function UpdateProfileInformation({
       onError: (errors) =>
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error updating profile information", {
-            description: value[0],
+            description: value,
           });
         }),
     });

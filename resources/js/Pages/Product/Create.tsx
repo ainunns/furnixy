@@ -112,7 +112,7 @@ export default function Create({
       onError: (errors) => {
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error adding product", {
-            description: value[0],
+            description: value,
           });
         });
       },

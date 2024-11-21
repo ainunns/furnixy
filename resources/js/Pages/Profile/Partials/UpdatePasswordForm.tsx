@@ -49,7 +49,7 @@ export default function UpdatePasswordForm({
       onError: (errors) =>
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error updating password", {
-            description: value[0],
+            description: value,
           });
         }),
     });

@@ -44,7 +44,7 @@ export default function Register() {
       onError: (errors) =>
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error creating account", {
-            description: value[0],
+            description: value,
           });
         }),
       onFinish: () => reset(),

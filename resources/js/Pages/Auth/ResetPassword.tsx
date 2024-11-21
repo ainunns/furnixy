@@ -56,7 +56,7 @@ export default function ResetPassword({
       onError: (errors) =>
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error resetting password", {
-            description: value[0],
+            description: value,
           });
         }),
       onFinish: () => reset(),

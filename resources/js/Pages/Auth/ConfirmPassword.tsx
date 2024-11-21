@@ -33,7 +33,7 @@ export default function ConfirmPassword() {
       onError: (errors) =>
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error confirming password", {
-            description: value[0],
+            description: value,
           });
         }),
       onFinish: () => reset(),

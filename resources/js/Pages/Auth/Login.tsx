@@ -1,4 +1,3 @@
-import Checkbox from "@/Components/Forms/Checkbox";
 import Input from "@/Components/Forms/Input";
 import PrimaryButton from "@/Components/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
@@ -46,7 +45,7 @@ export default function Login({
       onError: (errors) =>
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error logging in", {
-            description: value[0],
+            description: value,
           });
         }),
       onFinish: () => reset(),
@@ -82,8 +81,12 @@ export default function Login({
               required: "Password is required",
             }}
           />
-
-          <Checkbox name="remember" id="remember" label="Remember me" />
+          <Link
+            href={route("register")}
+            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Don't have an account?
+          </Link>
 
           <div className="mt-4 flex items-center justify-end">
             {canResetPassword && (
@@ -94,7 +97,6 @@ export default function Login({
                 Forgot your password?
               </Link>
             )}
-
             <PrimaryButton type="submit" className="ms-4" disabled={processing}>
               Log in
             </PrimaryButton>

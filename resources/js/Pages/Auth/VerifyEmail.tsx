@@ -15,7 +15,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
       onError: (errors) =>
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error sending verification email", {
-            description: value[0],
+            description: value,
           });
         }),
     });

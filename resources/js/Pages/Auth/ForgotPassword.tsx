@@ -34,7 +34,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
       onError: (errors) =>
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error sending password reset link", {
-            description: value[0],
+            description: value,
           });
         }),
     });

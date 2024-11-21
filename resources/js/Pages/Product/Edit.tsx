@@ -64,7 +64,7 @@ export default function Edit({
       onError: (errors) =>
         Object.entries(errors).forEach(([_, value]) => {
           toast.error("Error updating product", {
-            description: value[0],
+            description: value,
           });
         }),
       onFinish: () => reset(),
