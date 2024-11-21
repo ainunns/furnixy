@@ -140,10 +140,10 @@ const ProductIndex = ({
                 <MapPin width="20px" height="20px" />
                 <Typography variant="b1">{p.city}</Typography>
               </div>
-              <div className="flex">
-                <Badge>
-                  {p.category.map((category) => category.name).join(", ")}
-                </Badge>
+              <div className="flex gap-2">
+                {p.category.map((c) => (
+                  <Badge key={c.id}>{c.name}</Badge>
+                ))}
               </div>
             </Link>
           ))}

@@ -106,10 +106,10 @@ export default function Show({ product }: { product: ProductType }) {
                 <MapPin width="20px" height="20px" />
                 <Typography variant="b1">{product.city}</Typography>
               </div>
-              <div className="flex">
-                <Badge>
-                  {product.category.map((category) => category.name).join(", ")}
-                </Badge>
+              <div className="flex gap-2">
+                {product.category.map((c) => (
+                  <Badge key={c.id}>{c.name}</Badge>
+                ))}
               </div>
               {role === "user" && (
                 <div className="flex items-center justify-center flex-col gap-2 mt-4">
