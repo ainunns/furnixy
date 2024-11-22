@@ -46,7 +46,7 @@ Route::middleware('auth', 'role:user')->group(function () {
         Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     });
 
-    Route::get('/transaction', [TransactionController::class, 'index'])->name('transaction.index');
+    Route::get('/history', [TransactionController::class, 'index'])->name('transaction.index');
 });
 
 Route::middleware('auth', 'role:admin')->group(function () {
