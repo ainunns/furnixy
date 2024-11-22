@@ -44,6 +44,14 @@ export default function Navbar() {
                 >
                   Cart
                 </NavLink>
+              )}{" "}
+              {auth.user !== null && auth.user.role === "user" && (
+                <NavLink
+                  href={route("transaction.index")}
+                  active={route().current("transaction.index")}
+                >
+                  Transaction
+                </NavLink>
               )}
             </div>
           </div>
