@@ -65,8 +65,8 @@ const ProductIndex = ({
         <Typography variant="h1" className="font-semibold">
           All Product
         </Typography>
-        <div className="flex justify-between mt-6">
-          <div className="relative mt-1 self-start">
+        <div className="flex flex-col md:flex-row justify-between mt-6 gap-y-4">
+          <div className="relative mt-1 self-start w-full md:w-fit">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search className="text-xl text-typo" />
             </div>
@@ -106,12 +106,12 @@ const ProductIndex = ({
                 openNewTab={false}
                 leftIcon={Plus}
               >
-                Add Product
+                Product
               </ButtonLink>
             )}
           </div>
         </div>
-        <div className="grid md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {productList.map((p) => (
             <Link
               href={route("product.show", p.id)}

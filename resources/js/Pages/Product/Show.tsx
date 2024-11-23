@@ -78,7 +78,7 @@ export default function Show({ product }: { product: ProductType }) {
           </ButtonLink>
         </div>
         <div className="flex flex-col justify-center items-center mt-4">
-          <div className="flex flex-col md:flex-row gap-2 items-center w-full">
+          <div className="flex flex-col lg:flex-row gap-2 items-center w-full">
             <div className="flex justify-center items-center">
               <img
                 src={`/storage/${product.image_url}`}

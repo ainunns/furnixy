@@ -105,7 +105,7 @@ class CartController extends Controller
 
             DB::commit();
 
-            return redirect()->back();
+            return redirect()->intended(route('transaction.index'));
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

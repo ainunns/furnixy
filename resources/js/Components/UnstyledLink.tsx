@@ -12,7 +12,14 @@ export type UnstyledLinkProps = {
 
 const UnstyledLink = React.forwardRef<HTMLAnchorElement, UnstyledLinkProps>(
   (
-    { children, href, openNewTab, className, inertiaLinkProps, ...rest },
+    {
+      children,
+      href,
+      openNewTab = false,
+      className,
+      inertiaLinkProps,
+      ...rest
+    },
     ref,
   ) => {
     const isNewTab =
