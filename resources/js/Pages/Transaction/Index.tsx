@@ -6,16 +6,27 @@ import {
 } from "@/Components/Accordion";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { numberToCurrency } from "@/Lib/utils";
+import { cn, numberToCurrency } from "@/Lib/utils";
 import { CartType } from "@/types/entities/cart";
 import { TransactionType } from "@/types/entities/transaction";
 import { Head } from "@inertiajs/react";
 import { format } from "date-fns";
+import { Search, XCircle } from "lucide-react";
+import * as React from "react";
 import NotFound from "./container/NotFound";
 
 export default function TransactionIndex({
   transaction,
 }: { transaction: TransactionType[] }) {
+  const [filter, setFilter] = React.useState<string>("");
+
+  const filteredTransaction = transaction.filter((t) => {
+    const matchesText = t.cart_product.some((cp) =>
+      cp.product.name.toLowerCase().includes(filter.toLowerCase()),
+    );
+    return matchesText;
+  });
+
   return (
     <AuthenticatedLayout>
       <Head title="Order List" />
@@ -26,8 +37,40 @@ export default function TransactionIndex({
           <Typography variant="h1" className="font-semibold">
             Order List
           </Typography>
+
+          <div className="flex flex-col md:flex-row justify-between mt-6 gap-y-4">
+            <div className="relative mt-1 self-start w-full md:w-fit">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <Search className="text-xl text-typo" />
+              </div>
+              <input
+                type="text"
+                value={filter ?? ""}
+                onChange={(e) => {
+                  setFilter(String(e.target.value));
+                }}
+                className={cn(
+                  "flex w-full rounded-lg shadow-sm",
+                  "min-h-[2.25rem] py-0 px-10 md:min-h-[2.5rem]",
+                  "border-gray-300 focus:border-primary-500 focus:ring-primary-500",
+                )}
+                placeholder="Search..."
+              />
+              {filter !== "" && (
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                  <button
+                    type="button"
+                    onClick={() => setFilter("")}
+                    className="p-1"
+                  >
+                    <XCircle className="text-xl text-typo-icons" />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
           <div className="flex flex-col w-full gap-4">
-            {transaction.map((t) => (
+            {filteredTransaction.map((t) => (
               <div
                 key={t.id}
                 className="bg-white shadow-md rounded-lg p-4 flex flex-col gap-6"
@@ -69,7 +112,7 @@ export default function TransactionIndex({
                         <AccordionTrigger className="py-2" asChild>
                           <Typography
                             variant="s3"
-                            className="text-typo data-[state=open]:hidden"
+                            className="text-primary-500 underline data-[state=open]:hidden"
                           >
                             Show more items
                           </Typography>
@@ -77,7 +120,7 @@ export default function TransactionIndex({
                         <AccordionTrigger className="py-2" asChild>
                           <Typography
                             variant="s3"
-                            className="text-typo data-[state=closed]:hidden"
+                            className="text-primary-500 underline data-[state=closed]:hidden"
                           >
                             Show less items
                           </Typography>
