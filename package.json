@@ -45,6 +45,7 @@
     "clsx": "^2.1.1",
     "lodash.get": "^4.4.2",
     "lucide-react": "^0.451.0",
+    "react-datepicker": "^7.5.0",
     "react-dropzone": "^14.2.9",
     "react-hook-form": "^7.53.0",
     "react-image-lightbox-rotation": "5.1.4-rotate",
