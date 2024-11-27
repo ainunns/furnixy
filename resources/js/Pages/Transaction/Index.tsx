@@ -11,6 +11,7 @@ import { CartType } from "@/types/entities/cart";
 import { TransactionType } from "@/types/entities/transaction";
 import { Head } from "@inertiajs/react";
 import { format } from "date-fns";
+import NotFound from "./container/NotFound";
 
 export default function TransactionIndex({
   transaction,
@@ -19,7 +20,7 @@ export default function TransactionIndex({
     <AuthenticatedLayout>
       <Head title="Order List" />
       {transaction.length === 0 ? (
-        <>beli dulu sana</>
+        <NotFound />
       ) : (
         <section className="px-10 md:px-20 py-8 flex flex-col gap-4">
           <Typography variant="h1" className="font-semibold">
