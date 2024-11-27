@@ -13,16 +13,16 @@ class TransactionController extends Controller
 {
     public function index(Request $request)
     {
-        $categoryId = $request->query('category_id');
+        $categoryIds = $request->query('category_id', []);
         $startDate = $request->query('start_date');
         $endDate = $request->query('end_date');
 
         $category = Category::all();
 
         $transaction = Transaction::with(['cart_product.product.category'])
-            ->whereHas('cart_product.product.category', function ($query) use ($categoryId) {
-                if ($categoryId) {
-                    $query->where('category_id', $categoryId);
+            ->whereHas('cart_product.product.category', function ($query) use ($categoryIds) {
+                if (!empty($categoryIds)) {
+                    $query->whereIn('category_id', $categoryIds);
                 }
             })
             ->whereHas('cart_product', function ($query) {
@@ -41,7 +41,7 @@ class TransactionController extends Controller
         return Inertia::render('Transaction/Index', [
             'transaction' => $transaction,
             'category' => $category,
-            'categoryId' => $categoryId,
+            'categoryIds' => $categoryIds,
             'startDate' => $startDate,
             'endDate' => $endDate,
         ]);
