@@ -2,7 +2,7 @@ import Badge from "@/Components/Badge";
 import ButtonLink from "@/Components/ButtonLink";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { cn } from "@/Lib/utils";
+import { cn, numberToCurrency } from "@/Lib/utils";
 import { CategoryType } from "@/types/entities/category";
 import { ProductType } from "@/types/entities/product";
 import { Link, usePage } from "@inertiajs/react";
@@ -133,7 +133,7 @@ const ProductIndex = ({
                 {p.description}
               </Typography>
               <Typography variant="s1" className="">
-                Rp{p.price}
+                {numberToCurrency(p.price)}
               </Typography>
               <Typography variant="b1">Stock: {p.stock}</Typography>
               <div className="flex gap-2 items-center w-full">

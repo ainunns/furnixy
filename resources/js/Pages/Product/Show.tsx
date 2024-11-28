@@ -5,6 +5,7 @@ import Input from "@/Components/Forms/Input";
 import IconButton from "@/Components/IconButton";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { numberToCurrency } from "@/Lib/utils";
 import { ProductType } from "@/types/entities/product";
 import {
   Head,
@@ -72,7 +73,7 @@ export default function Show({ product }: { product: ProductType }) {
       <Head title="Detail Product" />
       <div className="px-10 md:px-10 py-8">
         <div>
-          <ButtonLink href="/" leftIcon={ArrowLeft}>
+          <ButtonLink href="/product" leftIcon={ArrowLeft}>
             Back
           </ButtonLink>
         </div>
@@ -92,7 +93,9 @@ export default function Show({ product }: { product: ProductType }) {
                 </Typography>
               </div>
               <div className="w-full">
-                <Typography variant="s1">Rp{product.price}</Typography>
+                <Typography variant="s1">
+                  {numberToCurrency(product.price)}
+                </Typography>
               </div>
               <div className="w-full">
                 <Typography variant="b1" className="text-neutral-400">
