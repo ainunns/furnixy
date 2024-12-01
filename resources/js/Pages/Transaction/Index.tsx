@@ -5,6 +5,8 @@ import {
   AccordionTrigger,
 } from "@/Components/Accordion";
 import Badge from "@/Components/Badge";
+import DatepickerFilter from "@/Components/DatepickerFilter";
+import PopupFilter, { PopupFilterProps } from "@/Components/PopupFilter";
 import Typography from "@/Components/Typography";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { cn, numberToCurrency } from "@/Lib/utils";
@@ -13,12 +15,9 @@ import { CategoryType } from "@/types/entities/category";
 import { TransactionType } from "@/types/entities/transaction";
 import { Head } from "@inertiajs/react";
 import { router } from "@inertiajs/react";
-import { format } from "date-fns";
+import { format, formatDate } from "date-fns";
 import { Search, XCircle } from "lucide-react";
 import * as React from "react";
-import PopupFilter, {
-  PopupFilterProps,
-} from "../Product/Components/PopupFilter";
 import NotFound from "./container/NotFound";
 
 type CategoryFilter = {
@@ -29,20 +28,36 @@ type TransactionIndexProps = {
   transaction: TransactionType[];
   category: CategoryType[];
   categoryIds: string[];
+  startDate: string;
+  endDate: string;
+};
+
+type QueryType = {
+  category_id: string[];
+  start_date?: string;
+  end_date?: string;
 };
 
 export default function TransactionIndex({
   transaction,
   category,
   categoryIds,
+  startDate,
+  endDate,
 }: TransactionIndexProps) {
   const [filter, setFilter] = React.useState<string>("");
-
+  const [filterDate, setFilterDate] = React.useState<Date[]>(
+    [
+      startDate ? new Date(startDate) : null,
+      endDate ? new Date(endDate) : null,
+    ].filter(Boolean) as Date[],
+  );
   const [filterQuery, setFilterQuery] = React.useState<CategoryFilter>({
     category: categoryIds,
   });
 
   const prevCategory = React.useRef<string[]>(categoryIds);
+  const prevDate = React.useRef<Date[]>(filterDate);
 
   const filterOption: PopupFilterProps<CategoryFilter>["filterOption"] =
     React.useMemo(
@@ -79,68 +94,78 @@ export default function TransactionIndex({
   React.useEffect(() => {
     if (
       JSON.stringify(filterQuery.category) !==
-      JSON.stringify(prevCategory.current)
+        JSON.stringify(prevCategory.current) ||
+      (JSON.stringify(filterDate) !== JSON.stringify(prevDate.current) &&
+        !(!filterDate[0] !== !filterDate[1]))
     ) {
-      router.get(
-        "/history",
-        { category_id: filterQuery.category },
-        {
-          preserveState: true,
-          preserveScroll: true,
-        },
-      );
+      const query: QueryType = {
+        category_id: filterQuery.category,
+      };
+      if (filterDate[0] && filterDate[1]) {
+        query.start_date = formatDate(filterDate[0], "yyyy-MM-dd");
+        query.end_date = formatDate(filterDate[1], "yyyy-MM-dd");
+      }
+      router.get("/history", query, {
+        preserveState: true,
+        preserveScroll: true,
+      });
       prevCategory.current = filterQuery.category;
+      prevDate.current = filterDate;
     }
-  }, [filterQuery.category]);
+  }, [filterQuery.category, filterDate]);
 
   return (
     <AuthenticatedLayout>
       <Head title="Order List" />
-      {transaction.length === 0 ? (
-        <NotFound />
-      ) : (
-        <section className="px-10 md:px-20 py-8 flex flex-col gap-4">
-          <Typography variant="h1" className="font-semibold">
-            Order List
-          </Typography>
-
-          <div className="flex flex-col md:flex-row justify-between mt-6 gap-y-4">
-            <div className="relative mt-1 self-start w-full md:w-fit">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <Search className="text-xl text-typo" />
-              </div>
-              <input
-                type="text"
-                value={filter ?? ""}
-                onChange={handleFilterChange}
-                className={cn(
-                  "flex w-full rounded-lg shadow-sm",
-                  "min-h-[2.25rem] py-0 px-10 md:min-h-[2.5rem]",
-                  "border-gray-300 focus:border-primary-500 focus:ring-primary-500",
-                )}
-                placeholder="Search..."
-              />
-              {filter !== "" && (
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                  <button
-                    type="button"
-                    onClick={handleClearFilter}
-                    className="p-1"
-                  >
-                    <XCircle className="text-xl text-typo-icons" />
-                  </button>
-                </div>
+      <section className="px-10 md:px-20 py-8 flex flex-col gap-4">
+        <Typography variant="h1" className="font-semibold">
+          Order List
+        </Typography>
+        <div className="flex flex-col md:flex-row justify-between mt-6 gap-y-4">
+          <div className="relative mt-1 self-start w-full md:w-fit">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Search className="text-xl text-typo" />
+            </div>
+            <input
+              type="text"
+              value={filter ?? ""}
+              onChange={handleFilterChange}
+              className={cn(
+                "flex w-full rounded-lg shadow-sm",
+                "min-h-[2.25rem] py-0 px-10 md:min-h-[2.5rem]",
+                "border-gray-300 focus:border-primary-500 focus:ring-primary-500",
               )}
-            </div>
-            <div className="flex gap-2">
-              <PopupFilter
-                filterQuery={filterQuery}
-                filterOption={filterOption}
-                setFilterQuery={setFilterQuery}
-                onResetFilter={() => setFilterQuery({ category: [] })}
-              />
-            </div>
+              placeholder="Search..."
+            />
+            {filter !== "" && (
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2">
+                <button
+                  type="button"
+                  onClick={handleClearFilter}
+                  className="p-1"
+                >
+                  <XCircle className="text-xl text-typo-icons" />
+                </button>
+              </div>
+            )}
           </div>
+          <div className="flex gap-2">
+            <DatepickerFilter
+              date={filterDate}
+              setDate={setFilterDate}
+              onResetFilter={() => setFilterDate([])}
+            />
+            <PopupFilter
+              filterQuery={filterQuery}
+              filterOption={filterOption}
+              setFilterQuery={setFilterQuery}
+              onResetFilter={() => setFilterQuery({ category: [] })}
+            />
+          </div>
+        </div>
+        {filteredTransaction.length === 0 ? (
+          <NotFound />
+        ) : (
           <div className="flex flex-col w-full gap-4">
             {filteredTransaction.map((t) => (
               <div
@@ -215,8 +240,8 @@ export default function TransactionIndex({
               </div>
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </section>
     </AuthenticatedLayout>
   );
 }

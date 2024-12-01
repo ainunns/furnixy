@@ -3,7 +3,7 @@ import Typography from "@/Components/Typography";
 
 export default function NotFound() {
   return (
-    <section className="w-full min-h-screen flex flex-col items-center justify-center gap-6">
+    <section className="w-full py-40 flex flex-col items-center justify-center gap-6">
       <svg
         width="214"
         height="211"

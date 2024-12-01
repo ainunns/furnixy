@@ -9,7 +9,7 @@ import { Link, usePage } from "@inertiajs/react";
 import { Head } from "@inertiajs/react";
 import { MapPin, Plus, Search, XCircle } from "lucide-react";
 import * as React from "react";
-import PopupFilter, { PopupFilterProps } from "./Components/PopupFilter";
+import PopupFilter, { PopupFilterProps } from "../../Components/PopupFilter";
 
 type CategoryFilter = {
   category: string[];

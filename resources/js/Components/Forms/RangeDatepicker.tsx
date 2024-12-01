@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import get from "lodash.get";
-import { Calendar } from "lucide-react";
+import { Calendar, XCircle } from "lucide-react";
 import { Controller, RegisterOptions, useFormContext } from "react-hook-form";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -16,12 +16,12 @@ type ReactDatePickerProps = {
   placeholder?: string;
   defaultYear?: number;
   defaultMonth?: number;
-  defaultValue?: string;
   helperText?: string;
   readOnly?: boolean;
   /** Disable error style (not disabling error validation) */
   hideError?: boolean;
   containerClassName?: string;
+  onClearDate?: () => void;
 } & Omit<DatePickerProps, "onChange">;
 
 export default function RangeDatePicker({
@@ -31,11 +31,12 @@ export default function RangeDatePicker({
   placeholder,
   defaultYear,
   defaultMonth,
-  defaultValue,
   helperText,
   readOnly = false,
   hideError = false,
   disabled,
+  isClearable,
+  onClearDate,
   containerClassName,
 }: ReactDatePickerProps) {
   const {
@@ -76,7 +77,6 @@ export default function RangeDatePicker({
       <Controller
         control={control}
         rules={validation}
-        defaultValue={defaultValue}
         name={id}
         render={({ field: { onChange, onBlur, value } }) => {
           const startDate = Array.isArray(value)
@@ -100,7 +100,7 @@ export default function RangeDatePicker({
                   endDate={endDate}
                   className={clsx(
                     "flex w-full rounded-lg shadow-sm",
-                    "min-h-[2.25rem] py-0 md:min-h-[2.5rem]",
+                    "min-h-[2.5rem] py-0 md:min-h-[2.75rem]",
                     "border-gray-300 focus:border-primary-500 focus:ring-primary-500",
                     (readOnly || disabled) &&
                       "cursor-not-allowed border-gray-300 bg-gray-100 focus:border-gray-300 focus:ring-0",
@@ -118,10 +118,14 @@ export default function RangeDatePicker({
                   disabled={disabled}
                   selectsRange
                 />
-                <Calendar
-                  size={18}
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 transform text-typo-icons"
-                />
+                <div className="absolute flex gap-2 right-4 top-1/2 -translate-y-1/2 transform text-typo-icons">
+                  {isClearable && (
+                    <button type="button" onClick={() => onClearDate?.()}>
+                      <XCircle size={16} className="text-typo-icons" />
+                    </button>
+                  )}
+                  <Calendar size={18} />
+                </div>
               </div>
               {helperText && (
                 <Typography variant="c1" color="secondary" className="mt-1">
