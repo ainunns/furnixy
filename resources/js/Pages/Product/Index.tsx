@@ -97,6 +97,7 @@ const ProductIndex = ({
           </div>
           <div className="flex gap-2">
             <PopupFilter
+              filterQuery={filterQuery}
               filterOption={filterOption}
               setFilterQuery={setFilterQuery}
             />

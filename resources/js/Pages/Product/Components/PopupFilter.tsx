@@ -20,25 +20,43 @@ export type PopupFilterProps<T extends Record<string, string[]>> = {
       name: string;
     }[];
   }[];
+  filterQuery: T;
   setFilterQuery: React.Dispatch<React.SetStateAction<T>>;
+  onResetFilter?: () => void;
   title?: string;
 } & React.ComponentPropsWithoutRef<"div">;
 
+type FormData = {
+  filter: string[];
+};
+
 export default function PopupFilter<T extends Record<string, string[]>>({
   filterOption,
+  filterQuery,
   setFilterQuery,
+  onResetFilter,
   title = "Filter",
 }: PopupFilterProps<T>) {
   //#region  //*=========== Form ===========
-  const methods = useForm({
+  const defaultFilterValues = React.useMemo(() => {
+    return Object.entries(filterQuery).reduce((acc, [key, values]) => {
+      return [...acc, ...values.map((value) => `${key}.${value}`)];
+    }, [] as string[]);
+  }, [filterQuery]);
+
+  const methods = useForm<FormData>({
     mode: "onTouched",
+    defaultValues: {
+      filter: defaultFilterValues,
+    },
   });
   const { control, setValue } = methods;
 
-  const filter: string[] = useWatch({
-    control,
-    name: "filter[]",
-  });
+  const filter =
+    useWatch({
+      control,
+      name: "filter",
+    }) ?? [];
   //#endregion  //*======== Form ===========
 
   React.useEffect(() => {
@@ -56,7 +74,10 @@ export default function PopupFilter<T extends Record<string, string[]>>({
     setFilterQuery(parsedFilter);
   }, [filter, filterOption, setFilterQuery]);
 
-  const resetFilter = () => setValue("filter[]", []);
+  const resetFilter = () => {
+    onResetFilter?.();
+    setValue("filter", []);
+  };
 
   return (
     <Popover>
