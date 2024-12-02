@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Illuminate\Support\Carbon;
 
 class CartController extends Controller
 {
@@ -94,6 +95,7 @@ class CartController extends Controller
             }
 
             $transaction->total_price = $total_price;
+            $transaction->created_at = Carbon::now('Asia/Jakarta');
             $transaction->save();
 
             for($i = 0; $i < count($validatedCart['product_id']); $i++) {
