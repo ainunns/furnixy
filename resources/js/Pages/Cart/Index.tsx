@@ -27,7 +27,13 @@ const CartIndex = ({ cart }: { cart: CartType[] }) => {
   const readyToCheckout =
     cart.filter((item) => checkedOut.includes(item.id.toString())) ?? [];
 
-  transform((data) => ({ ...data, ...getValues() }));
+  transform((data) => ({
+    ...data,
+    product_id:
+      typeof getValues("product_id") === "string"
+        ? [getValues("product_id")]
+        : getValues("product_id"),
+  }));
 
   const onSubmit: SubmitHandler<CheckoutProductType> = async () => {
     post(route("cart.checkout"), {
