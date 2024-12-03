@@ -5,7 +5,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { cn, numberToCurrency } from "@/Lib/utils";
 import { CategoryType } from "@/types/entities/category";
 import { ProductType } from "@/types/entities/product";
-import { Link, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import { Head } from "@inertiajs/react";
 import { MapPin, Plus, Search, XCircle } from "lucide-react";
 import * as React from "react";
@@ -58,6 +58,24 @@ const ProductIndex = ({
   };
   const role = auth.user.role;
 
+  const handleSearchChange = (value: string) => {
+    setFilter(value);
+    router.get(
+      "/product",
+      { search: value },
+      { preserveState: true, preserveScroll: true },
+    );
+  };
+
+  React.useEffect(() => {
+    const searchQuery = new URLSearchParams(window.location.search).get(
+      "search",
+    );
+    if (searchQuery !== filter) {
+      setFilter(searchQuery || "");
+    }
+  }, []);
+
   return (
     <AuthenticatedLayout>
       <Head title="All Product" />
@@ -73,9 +91,7 @@ const ProductIndex = ({
             <input
               type="text"
               value={filter ?? ""}
-              onChange={(e) => {
-                setFilter(String(e.target.value));
-              }}
+              onChange={(e) => handleSearchChange(e.target.value)}
               className={cn(
                 "flex w-full rounded-lg shadow-sm",
                 "min-h-[2.25rem] py-0 px-10 md:min-h-[2.5rem]",
@@ -87,7 +103,7 @@ const ProductIndex = ({
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                 <button
                   type="button"
-                  onClick={() => setFilter("")}
+                  onClick={() => handleSearchChange("")}
                   className="p-1"
                 >
                   <XCircle className="text-xl text-typo-icons" />

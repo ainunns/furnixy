@@ -7,7 +7,9 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -92,8 +94,20 @@ class ProductController extends Controller
         }
     }
 
-    public function index() {
+    public function index(Request $request) {
+        $query = $request->query('search');
         $product = Product::with('category')->get();
+        
+        if($query) {
+            $response = Http::post('https://ecommerce-search-engine.onrender.com/search', [
+                'query' => $query,
+                'records' => $product->toArray(),
+                'confidence' => 0.3
+            ]);
+
+            $product = collect($response->json());
+        }
+
         $category = Category::all();
 
         return Inertia::render('Product/Index', [
