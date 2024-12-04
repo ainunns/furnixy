@@ -6,6 +6,7 @@ import { A11y, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
+import ButtonLink from "@/Components/ButtonLink";
 
 export default function Welcome() {
   return (
@@ -19,10 +20,11 @@ export default function Welcome() {
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="absolute right-0 top-20 flex items-center justify-end p-8 z-10">
+        <div className="absolute right-0 top-20 flex flex-col items-end gap-4 justify-end p-8 z-10">
           <Typography variant="j1" className="text-right text-primary-700">
             Elevate Your Space, <br /> Redefine Your Comfort
           </Typography>
+          <ButtonLink href="/product">Shop Now</ButtonLink>
         </div>
       </section>
 
@@ -38,41 +40,71 @@ export default function Welcome() {
           className="w-full rounded-lg py-[96px!important]"
         >
           <SwiperSlide>
-            <div className="flex flex-col justify-center w-full bg-secondary-400 h-[250px] rounded-lg">
-              <div className="px-16">
-                <Typography variant="j1" className="text-primary-400">
-                  Enjoy Discounts Up to 70%!
-                </Typography>
-                <Typography className="text-secondary-900">
-                  Shop now and grab special prices on selected items. Don’t miss
-                  out—promo ends this month!
-                </Typography>
+            <div className="flex flex-col justify-center w-full bg-secondary-400 h-[500px] md:h-[250px] rounded-lg">
+              <div className="px-8 md:px-16 flex flex-col md:justify-between md:flex-row items-center gap-6">
+                <div>
+                  <Typography variant="j1" className="text-primary-400">
+                    Enjoy Discounts Up to 70%!
+                  </Typography>
+                  <Typography className="text-secondary-900">
+                    Shop now and grab special prices on selected items. Don’t
+                    miss out—promo ends this month!
+                  </Typography>
+                </div>
+                <div>
+                  <img
+                    src="/images/lamp.png"
+                    alt="lampu"
+                    width={200}
+                    height={200}
+                  />
+                </div>
               </div>
             </div>
           </SwiperSlide>
           <SwiperSlide>
-            <div className="flex flex-col justify-center w-full bg-secondary-400 h-[250px] rounded-lg">
-              <div className="px-16">
-                <Typography variant="j1" className="text-primary-400">
-                  New Arrivals Are Here
-                </Typography>
-                <Typography className="text-secondary-900">
-                  Explore our newest designs made just for you. Limited
-                  stock—get yours before they’re gone!
-                </Typography>
+            <div className="flex flex-col justify-center w-full bg-secondary-400 h-[500px] md:h-[250px] rounded-lg">
+              <div className="px-8 md:px-16 flex flex-col-reverse md:justify-between md:flex-row-reverse items-center gap-6">
+                <div>
+                  <Typography variant="j1" className="text-primary-400">
+                    New Arrivals Are Here
+                  </Typography>
+                  <Typography className="text-secondary-900">
+                    Explore our newest designs made just for you. Limited
+                    stock—get yours before they’re gone!
+                  </Typography>
+                </div>
+                <div>
+                  <img
+                    src="/images/basket.png"
+                    alt="keranjang"
+                    width={200}
+                    height={200}
+                  />
+                </div>
               </div>
             </div>
           </SwiperSlide>
           <SwiperSlide>
-            <div className="flex flex-col justify-center w-full bg-secondary-400 h-[250px] rounded-lg">
-              <div className="px-16">
-                <Typography variant="j1" className="text-primary-400">
-                  Today's Flash Sale!
-                </Typography>
-                <Typography className="text-secondary-900">
-                  Prices start at Rp99.999 on top-selling products. Available
-                  for a few hours only—shop now!
-                </Typography>
+            <div className="flex flex-col justify-center w-full bg-secondary-400 h-[500px] md:h-[250px] rounded-lg">
+              <div className="px-8 md:px-16 flex flex-col md:justify-between md:flex-row items-center gap-6">
+                <div>
+                  <Typography variant="j1" className="text-primary-400">
+                    Today's Flash Sale!
+                  </Typography>
+                  <Typography className="text-secondary-900">
+                    Prices start at Rp99.999 on top-selling products. Available
+                    for a few hours only—shop now!
+                  </Typography>
+                </div>
+                <div>
+                  <img
+                    src="/images/mirror.png"
+                    alt="mirror"
+                    width={200}
+                    height={200}
+                  />
+                </div>
               </div>
             </div>
           </SwiperSlide>
@@ -83,7 +115,7 @@ export default function Welcome() {
         <div className="flex flex-col lg:flex-row items-center justify-center">
           <div className="lg:w-1/2 flex justify-center">
             <img
-              src="/images/jumbotron-2.png"
+              src="/images/jumbotron.png"
               alt="kursi"
               width={960}
               height={1200}
@@ -109,10 +141,10 @@ export default function Welcome() {
           </div>
           <div className="lg:w-1/2 flex justify-center">
             <img
-              src="/images/jumbotron.png"
-              alt="kursi"
-              width={960}
-              height={1200}
+              src="/images/shelf.png"
+              alt="rak"
+              width={1000}
+              height={1000}
               className="w-1/2"
             />
           </div>
@@ -121,10 +153,10 @@ export default function Welcome() {
         <div className="flex flex-col lg:flex-row items-center justify-center">
           <div className="lg:w-1/2 flex justify-center">
             <img
-              src="/images/jumbotron-3.png"
-              alt="kursi"
-              width={960}
-              height={1200}
+              src="/images/table.png"
+              alt="meja"
+              width={1000}
+              height={1000}
               className="w-1/2"
             />
           </div>
