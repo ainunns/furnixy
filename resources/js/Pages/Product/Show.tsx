@@ -4,7 +4,7 @@ import ButtonLink from "@/Components/ButtonLink";
 import Input from "@/Components/Forms/Input";
 import IconButton from "@/Components/IconButton";
 import Typography from "@/Components/Typography";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Layout from "@/Layouts/Layout";
 import { numberToCurrency } from "@/Lib/utils";
 import { ProductType } from "@/types/entities/product";
 import {
@@ -49,6 +49,12 @@ export default function Show({ product }: { product: ProductType }) {
   }));
 
   const onSubmit: SubmitHandler<FormData> = () => {
+    if (!role) {
+      toast.error("You must login first");
+      router.get("/login");
+      return;
+    }
+
     post(route("cart.add", product.id), {
       onFinish: () => reset(),
       onError: (errors) => {
@@ -66,10 +72,10 @@ export default function Show({ product }: { product: ProductType }) {
       };
     };
   };
-  const role = auth.user.role;
+  const role = auth.user?.role;
 
   return (
-    <AuthenticatedLayout>
+    <Layout>
       <Head title="Detail Product" />
       <div className="px-10 md:px-10 py-8">
         <div>
@@ -114,7 +120,7 @@ export default function Show({ product }: { product: ProductType }) {
                   <Badge key={c.id}>{c.name}</Badge>
                 ))}
               </div>
-              {role === "user" && (
+              {role !== "admin" && (
                 <div className="flex items-center justify-center flex-col gap-2 mt-4">
                   <FormProvider {...methods}>
                     <form
@@ -169,6 +175,6 @@ export default function Show({ product }: { product: ProductType }) {
           </div>
         </div>
       </div>
-    </AuthenticatedLayout>
+    </Layout>
   );
 }
