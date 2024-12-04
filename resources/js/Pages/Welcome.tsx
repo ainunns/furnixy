@@ -1,33 +1,83 @@
-import ButtonLink from "@/Components/ButtonLink";
 import Typography from "@/Components/Typography";
 import Layout from "@/Layouts/Layout";
 import { Head } from "@inertiajs/react";
+import { A11y, Autoplay } from "swiper/modules";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
 
 export default function Welcome() {
   return (
     <Layout>
       <Head title="Welcome" />
-      <section className="h-screen flex justify-center items-center">
-        <div className="px-8 text-center">
-          <Typography variant="j1" className="text-primary-500">
-            FURNIXY
+      <section className="relative h-screen overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="/images/landing-1.png"
+            alt="kursi"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="absolute right-0 top-20 flex items-center justify-end p-8 z-10">
+          <Typography variant="j1" className="text-right text-primary-700">
+            Elevate Your Space, <br /> Redefine Your Comfort
           </Typography>
-          <Typography className="h5">
-            Elevate Your Space,{" "}
-            <span className="text-secondary-900">Redefine Your Comfort</span>
-          </Typography>
-          <ButtonLink className="mt-4" href="/product">
-            Check Our Products
-          </ButtonLink>
         </div>
       </section>
 
-      <div className="my-8 flex justify-center space-x-2">
-        <span className="w-1 h-1 bg-primary-300 rounded-full"></span>
-        <span className="w-1 h-1 bg-primary-300 rounded-full"></span>
-        <span className="w-1 h-1 bg-primary-300 rounded-full"></span>
+      <div className="px-6">
+        <Swiper
+          modules={[A11y, Autoplay]}
+          spaceBetween={50}
+          slidesPerView={1}
+          navigation
+          pagination={{ clickable: true }}
+          loop={true}
+          autoplay={{ delay: 2500, disableOnInteraction: false }}
+          className="w-full rounded-lg py-[96px!important]"
+        >
+          <SwiperSlide>
+            <div className="flex flex-col justify-center w-full bg-secondary-400 h-[250px] rounded-lg">
+              <div className="px-16">
+                <Typography variant="j1" className="text-primary-400">
+                  Enjoy Discounts Up to 70%!
+                </Typography>
+                <Typography className="text-secondary-900">
+                  Shop now and grab special prices on selected items. Don’t miss
+                  out—promo ends this month!
+                </Typography>
+              </div>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
+            <div className="flex flex-col justify-center w-full bg-secondary-400 h-[250px] rounded-lg">
+              <div className="px-16">
+                <Typography variant="j1" className="text-primary-400">
+                  New Arrivals Are Here
+                </Typography>
+                <Typography className="text-secondary-900">
+                  Explore our newest designs made just for you. Limited
+                  stock—get yours before they’re gone!
+                </Typography>
+              </div>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide>
+            <div className="flex flex-col justify-center w-full bg-secondary-400 h-[250px] rounded-lg">
+              <div className="px-16">
+                <Typography variant="j1" className="text-primary-400">
+                  Today's Flash Sale!
+                </Typography>
+                <Typography className="text-secondary-900">
+                  Prices start at Rp99.999 on top-selling products. Available
+                  for a few hours only—shop now!
+                </Typography>
+              </div>
+            </div>
+          </SwiperSlide>
+        </Swiper>
       </div>
-
       <section className="flex flex-col py-8">
         {/* 1 */}
         <div className="flex flex-col lg:flex-row items-center justify-center">
