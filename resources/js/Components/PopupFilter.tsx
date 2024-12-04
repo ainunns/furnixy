@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/Components/Popover";
 import Typography from "@/Components/Typography";
+import { cn } from "@/Lib/utils";
 import { ChevronDown, Filter, X } from "lucide-react";
 import * as React from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
@@ -36,6 +37,7 @@ export default function PopupFilter<T extends Record<string, string[]>>({
   setFilterQuery,
   onResetFilter,
   title = "Filter",
+  className,
 }: PopupFilterProps<T>) {
   //#region  //*=========== Form ===========
   const defaultFilterValues = React.useMemo(() => {
@@ -87,7 +89,7 @@ export default function PopupFilter<T extends Record<string, string[]>>({
           size="sm"
           leftIcon={Filter}
           rightIcon={ChevronDown}
-          className="bg-primary-100 w-full"
+          className={cn("bg-primary-100", className)}
         >
           {title} {filter?.length > 0 && `(${filter.length})`}
         </Button>

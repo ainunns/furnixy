@@ -33,7 +33,6 @@ export default function Show({
   product: ProductType;
   relatedProducts: ProductType[];
 }) {
-  console.log(relatedProducts);
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this product?")) {
       router.delete(`/product/${product.id}/delete`, {
@@ -192,7 +191,21 @@ export default function Show({
           <Swiper
             modules={[A11y, Autoplay]}
             spaceBetween={50}
-            slidesPerView={4}
+            slidesPerView={1}
+            breakpoints={{
+              640: {
+                slidesPerView: 1,
+              },
+              768: {
+                slidesPerView: 2,
+              },
+              1024: {
+                slidesPerView: 3,
+              },
+              1280: {
+                slidesPerView: 4,
+              },
+            }}
             loop={true}
             autoplay={{ delay: 2000, disableOnInteraction: false }}
             className="w-full py-[32px!important]"

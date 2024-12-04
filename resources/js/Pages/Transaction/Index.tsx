@@ -255,13 +255,13 @@ function ProductItems({ cart_product: cp, quantity }: ProductItemsProps) {
   return (
     <div
       key={cp.id}
-      className="w-full grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 items-center"
+      className="w-full grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 items-center"
     >
-      <div className="flex gap-4 items-center col-span-2 md:col-span-3 lg:col-span-5">
+      <div className="flex flex-col md:flex-row gap-4 items-start md:items-center col-span-2 md:col-span-3 lg:col-span-5">
         <img
           src={`/storage/${cp.product.image_url}`}
           alt={cp.product.name}
-          className="size-20 object-fit rounded"
+          className="size-28 md:size-20 object-fit rounded"
         />
         <div className="flex flex-col gap-2 w-full">
           <Typography variant="s2" className="text-typo">
@@ -280,8 +280,8 @@ function ProductItems({ cart_product: cp, quantity }: ProductItemsProps) {
           </Typography>
         </div>
       </div>
-      <div className="flex flex-col col-span-1">
-        <Typography variant="s3" className="text-typo-secondary">
+      <div className="flex flex-col col-span-1 ">
+        <Typography variant="s3" className="text-typo-secondary text-wrap">
           Total Price
         </Typography>
         <Typography variant="s2" className="text-typo">

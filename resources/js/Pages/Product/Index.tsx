@@ -118,6 +118,7 @@ const ProductIndex = ({
               filterQuery={filterQuery}
               filterOption={filterOption}
               setFilterQuery={setFilterQuery}
+              className="w-full"
             />
             {role === "admin" && (
               <ButtonLink
