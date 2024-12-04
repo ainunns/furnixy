@@ -131,10 +131,22 @@ class ProductController extends Controller
     public function show(string $id)
     {
         $product = Product::with('category')->findOrFail($id);
+    
+        $allProducts = Product::with('category')->get();
+    
+        $response = Http::post('https://ecommerce-search-engine.onrender.com/search', [
+            'query' => $product->name,
+            'records' => $allProducts->toArray(),
+            'confidence' => 0.3,
+        ]);
+    
+        $relatedProducts = collect($response->json());
+    
         $user = Auth::user();
 
         return Inertia::render('Product/Show', [
             'product' => $product,
+            'relatedProducts' => $relatedProducts,
             'auth' => [
                 'user' => $user ? [
                     'id' => $user->id,
@@ -146,9 +158,7 @@ class ProductController extends Controller
         ]);
     }
 
-
-    public function destroy(string $id)
-    {
+    public function destroy(string $id) {
         $product = Product::findOrFail($id);
         if (Storage::disk('public')->exists($product->image_url)) {
             Storage::disk('public')->delete($product->image_url);

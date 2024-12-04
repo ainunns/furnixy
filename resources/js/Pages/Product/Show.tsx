@@ -4,6 +4,7 @@ import ButtonLink from "@/Components/ButtonLink";
 import Input from "@/Components/Forms/Input";
 import IconButton from "@/Components/IconButton";
 import Typography from "@/Components/Typography";
+import UnstyledLink from "@/Components/UnstyledLink";
 import Layout from "@/Layouts/Layout";
 import { numberToCurrency } from "@/Lib/utils";
 import { ProductType } from "@/types/entities/product";
@@ -16,13 +17,23 @@ import {
 import { ArrowLeft, MapPin, ShoppingCart } from "lucide-react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { A11y, Autoplay } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 
 type FormData = {
   product_id: string;
   quantity: number;
 };
 
-export default function Show({ product }: { product: ProductType }) {
+export default function Show({
+  product,
+  relatedProducts,
+}: {
+  product: ProductType;
+  relatedProducts: ProductType[];
+}) {
+  console.log(relatedProducts);
   const handleDelete = () => {
     if (confirm("Are you sure you want to delete this product?")) {
       router.delete(`/product/${product.id}/delete`, {
@@ -173,6 +184,56 @@ export default function Show({ product }: { product: ProductType }) {
               )}
             </div>
           </div>
+        </div>
+        <div className="flex flex-col gap-2 mt-5">
+          <Typography variant="h2" className="text-secondary-800">
+            Similar products
+          </Typography>
+          <Swiper
+            modules={[A11y, Autoplay]}
+            spaceBetween={50}
+            slidesPerView={4}
+            loop={true}
+            autoplay={{ delay: 2000, disableOnInteraction: false }}
+            className="w-full py-[32px!important]"
+          >
+            {relatedProducts.map((p) => (
+              <SwiperSlide key={p.id}>
+                <UnstyledLink
+                  href={route("product.show", p.id)}
+                  className="bg-white shadow-md rounded-lg p-4 flex flex-col gap-1"
+                >
+                  <img
+                    src={`/storage/${p.image_url}`}
+                    alt={p.name}
+                    className="w-full h-40 object-cover rounded-md mb-4"
+                  />
+                  <Typography
+                    variant="h2"
+                    className="text-lg font-bold text-primary-500"
+                  >
+                    {p.name}
+                  </Typography>
+                  <Typography variant="s3" className="text-gray-600">
+                    {p.description}
+                  </Typography>
+                  <Typography variant="s1" className="">
+                    {numberToCurrency(p.price)}
+                  </Typography>
+                  <Typography variant="b1">Stock: {p.stock}</Typography>
+                  <div className="flex gap-2 items-center w-full">
+                    <MapPin width="20px" height="20px" />
+                    <Typography variant="b1">{p.city}</Typography>
+                  </div>
+                  <div className="flex gap-2">
+                    {p.category.map((c) => (
+                      <Badge key={c.id}>{c.name}</Badge>
+                    ))}
+                  </div>
+                </UnstyledLink>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       </div>
     </Layout>
