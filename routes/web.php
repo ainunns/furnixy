@@ -26,16 +26,15 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/product', [ProductController::class, 'index'])->name('product.index');
+Route::prefix('/product')->group(function () {
+    Route::get('/', [ProductController::class, 'index'])->name('product.index');
+    Route::get('/{product}/detail', [ProductController::class, 'show'])->name('product.show');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::prefix('/product')->group(function () {
-        Route::get('/{product}/detail', [ProductController::class, 'show'])->name('product.show');
-    });
 });
 
 Route::middleware('auth', 'role:user')->group(function () {

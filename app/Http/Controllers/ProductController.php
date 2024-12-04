@@ -131,9 +131,18 @@ class ProductController extends Controller
     public function show(string $id)
     {
         $product = Product::with('category')->findOrFail($id);
+        $user = Auth::user();
 
         return Inertia::render('Product/Show', [
-            'product' => $product
+            'product' => $product,
+            'auth' => [
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                ] : null,
+            ],
         ]);
     }
 
