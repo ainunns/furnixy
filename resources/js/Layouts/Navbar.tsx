@@ -22,7 +22,7 @@ export default function Navbar() {
     useState(false);
 
   return (
-    <>
+    <header className="w-full sticky top-0 left-0 z-50">
       <nav className="border-b border-gray-100 bg-white">
         <div className="w-full px-8 md:px-20">
           <div className="flex h-16 justify-between">
@@ -207,6 +207,6 @@ export default function Navbar() {
           </div>
         </div>
       </div>
-    </>
+    </header>
   );
 }
