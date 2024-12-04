@@ -1,7 +1,7 @@
 import Badge from "@/Components/Badge";
 import ButtonLink from "@/Components/ButtonLink";
 import Typography from "@/Components/Typography";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Layout from "@/Layouts/Layout";
 import { cn, numberToCurrency } from "@/Lib/utils";
 import { CategoryType } from "@/types/entities/category";
 import { ProductType } from "@/types/entities/product";
@@ -39,33 +39,35 @@ const ProductIndex = ({
       [],
     );
 
-  const productList = product.filter((p) => {
-    const matchesText = p.name.toLowerCase().includes(filter.toLowerCase());
-    const matchesCategory =
+  const productList = product.filter(
+    (p) =>
       filterQuery.category.length === 0 ||
-      p.category.some((c) => filterQuery.category.includes(c.id.toString()));
-    return matchesText && matchesCategory;
-  });
+      p.category.some((c) => filterQuery.category.includes(c.id.toString())),
+  );
 
   const { auth } = usePage().props as unknown as {
     auth: {
-      user: {
+      user?: {
         name: string;
         email: string;
         role: string;
       };
     };
   };
-  const role = auth.user.role;
+  const role = auth.user?.role;
 
-  const handleSearchChange = (value: string) => {
-    setFilter(value);
-    router.get(
-      "/product",
-      { search: value },
-      { preserveState: true, preserveScroll: true },
-    );
-  };
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      const search: { search?: string } = filter ? { search: filter } : {};
+
+      router.get("/product", search, {
+        preserveState: true,
+        preserveScroll: true,
+      });
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [filter]);
 
   React.useEffect(() => {
     const searchQuery = new URLSearchParams(window.location.search).get(
@@ -77,7 +79,7 @@ const ProductIndex = ({
   }, []);
 
   return (
-    <AuthenticatedLayout>
+    <Layout>
       <Head title="All Product" />
       <div className="px-10 md:px-20 py-8 flex flex-col gap-4">
         <Typography variant="h1" className="font-semibold">
@@ -91,7 +93,7 @@ const ProductIndex = ({
             <input
               type="text"
               value={filter ?? ""}
-              onChange={(e) => handleSearchChange(e.target.value)}
+              onChange={(e) => setFilter(e.target.value)}
               className={cn(
                 "flex w-full rounded-lg shadow-sm",
                 "min-h-[2.25rem] py-0 px-10 md:min-h-[2.5rem]",
@@ -103,10 +105,10 @@ const ProductIndex = ({
               <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                 <button
                   type="button"
-                  onClick={() => handleSearchChange("")}
+                  onClick={() => setFilter("")}
                   className="p-1"
                 >
-                  <XCircle className="text-xl text-typo-icons" />
+                  <XCircle size={20} className="text-typo-icons" />
                 </button>
               </div>
             )}
@@ -166,7 +168,7 @@ const ProductIndex = ({
           ))}
         </div>
       </div>
-    </AuthenticatedLayout>
+    </Layout>
   );
 };
 

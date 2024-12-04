@@ -8,6 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
@@ -32,7 +33,7 @@ class ProductController extends Controller
         try {
 
             $product = new Product;
-            
+
             $product->name = $request->name;
             $product->description = $request->description;
             $product->price = $request->price;
@@ -40,14 +41,14 @@ class ProductController extends Controller
             $product->rating = 0.0;
             $product->city = $request->city;
             $product->image_url = $request->file('image_url')[0]->store('images', 'public');
-            
+
             $product->save();
-            
+
             $categoryIds = $request->input('categories');
             $product->category()->attach($categoryIds);
-            
+
             DB::commit();
-            
+
             return redirect()->intended(route('product.show', $product->id));
         } catch (\Exception $e) {
             DB::rollBack();
@@ -55,7 +56,8 @@ class ProductController extends Controller
         }
     }
 
-    public function edit(string $id) {
+    public function edit(string $id)
+    {
         $product = Product::with('category')->findOrFail($id);
         $options = Category::all()->map(function ($category) {
             return [
@@ -94,11 +96,13 @@ class ProductController extends Controller
         }
     }
 
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
         $query = $request->query('search');
         $product = Product::with('category')->get();
-        
-        if($query) {
+        $user = Auth::user();
+
+        if ($query) {
             $response = Http::post('https://ecommerce-search-engine.onrender.com/search', [
                 'query' => $query,
                 'records' => $product->toArray(),
@@ -112,20 +116,30 @@ class ProductController extends Controller
 
         return Inertia::render('Product/Index', [
             'product' => $product,
-            'category' => $category
+            'category' => $category,
+            'auth' => [
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                ] : null,
+            ],
         ]);
     }
-    
-    public function show(string $id) {
+
+    public function show(string $id)
+    {
         $product = Product::with('category')->findOrFail($id);
-        
+
         return Inertia::render('Product/Show', [
             'product' => $product
         ]);
     }
 
-    
-    public function destroy(string $id) {
+
+    public function destroy(string $id)
+    {
         $product = Product::findOrFail($id);
         if (Storage::disk('public')->exists($product->image_url)) {
             Storage::disk('public')->delete($product->image_url);
@@ -134,5 +148,4 @@ class ProductController extends Controller
 
         return redirect()->intended(route('product.index'));
     }
-
 }

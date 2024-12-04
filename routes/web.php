@@ -26,6 +26,7 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/product', [ProductController::class, 'index'])->name('product.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -33,7 +34,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::prefix('/product')->group(function () {
-        Route::get('/', [ProductController::class, 'index'])->name('product.index');
         Route::get('/{product}/detail', [ProductController::class, 'show'])->name('product.show');
     });
 });

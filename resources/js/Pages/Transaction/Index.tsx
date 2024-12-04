@@ -144,7 +144,7 @@ export default function TransactionIndex({
                   onClick={handleClearFilter}
                   className="p-1"
                 >
-                  <XCircle className="text-xl text-typo-icons" />
+                  <XCircle size={20} className="text-typo-icons" />
                 </button>
               </div>
             )}
