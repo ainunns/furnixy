@@ -87,7 +87,7 @@ export default function PopupFilter<T extends Record<string, string[]>>({
           size="sm"
           leftIcon={Filter}
           rightIcon={ChevronDown}
-          className="bg-primary-100"
+          className="bg-primary-100 w-full"
         >
           {title} {filter?.length > 0 && `(${filter.length})`}
         </Button>
