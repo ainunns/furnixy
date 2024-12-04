@@ -161,6 +161,28 @@ export default function Navbar() {
               >
                 Dashboard
               </ResponsiveNavLink>
+              <ResponsiveNavLink
+                href={route("product.index")}
+                active={route().current("product.index")}
+              >
+                Product
+              </ResponsiveNavLink>
+              {auth.user !== null && auth.user.role === "user" && (
+                <ResponsiveNavLink
+                  href={route("cart.index")}
+                  active={route().current("cart.index")}
+                >
+                  Cart
+                </ResponsiveNavLink>
+              )}
+              {auth.user !== null && auth.user.role === "user" && (
+                <ResponsiveNavLink
+                  href={route("transaction.index")}
+                  active={route().current("transaction.index")}
+                >
+                  Transaction
+                </ResponsiveNavLink>
+              )}
             </div>
           )}
 
