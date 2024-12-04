@@ -1,5 +1,4 @@
 import { cn } from "@/Lib/utils";
-import clsx from "clsx";
 import get from "lodash.get";
 import * as React from "react";
 import { RegisterOptions, useFormContext } from "react-hook-form";
@@ -73,10 +72,10 @@ export default function Checkbox({
         />
         {label && (
           <Typography
-            className={clsx((readOnly || disabled) && "cursor-not-allowed")}
+            className={cn((readOnly || disabled) && "cursor-not-allowed")}
             as="label"
             variant={
-              clsx([size === "base" && "b2", size === "sm" && "b3"]) as
+              cn([size === "base" && "b2", size === "sm" && "b3"]) as
                 | "b2"
                 | "b3"
             }

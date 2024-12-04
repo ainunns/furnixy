@@ -1,5 +1,5 @@
+import { cn } from "@/Lib/utils";
 import { ExtractProps } from "@/types/helper";
-import clsx from "clsx";
 import get from "lodash.get";
 import { ChevronDown, X } from "lucide-react";
 import { Controller, RegisterOptions, useFormContext } from "react-hook-form";
@@ -79,7 +79,7 @@ export default function SearchableSelectInput({
       padding: 0,
       margin: 0,
       caretColor: "var(--color-primary-500)",
-      color: "#1F201d",
+      color: "#1F201D",
       "::placeholder": {
         color: "#5a5d56",
       },
@@ -153,7 +153,7 @@ export default function SearchableSelectInput({
         </Label>
       )}
       <div
-        className={clsx(
+        className={cn(
           "relative",
           withLabel && "mt-1",
           (disabled || readOnly) && "cursor-not-allowed",

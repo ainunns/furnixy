@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import get from "lodash.get";
 import { Calendar, XCircle } from "lucide-react";
 import { Controller, RegisterOptions, useFormContext } from "react-hook-form";
@@ -90,7 +89,7 @@ export default function RangeDatePicker({
 
           return (
             <>
-              <div className={clsx("relative", withLabel && "mt-1")}>
+              <div className={cn("relative", withLabel && "mt-1")}>
                 <DatePicker
                   name={id}
                   onChange={onChange}
@@ -98,7 +97,7 @@ export default function RangeDatePicker({
                   selected={startDate}
                   startDate={startDate}
                   endDate={endDate}
-                  className={clsx(
+                  className={cn(
                     "flex w-full rounded-lg shadow-sm",
                     "min-h-[2.5rem] py-0 md:min-h-[2.75rem]",
                     "border-gray-300 focus:border-primary-500 focus:ring-primary-500",

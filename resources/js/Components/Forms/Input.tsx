@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import { cn } from "@/Lib/utils";
 import get from "lodash.get";
 import { LucideIcon } from "lucide-react";
 import * as React from "react";
@@ -61,7 +61,7 @@ export default function Input({
           {label}
         </Label>
       )}
-      <div className={clsx("relative", withLabel && "mt-1")}>
+      <div className={cn("relative", withLabel && "mt-1")}>
         {LeftIcon && (
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             {typeof LeftIcon === "string" ? (
@@ -79,7 +79,7 @@ export default function Input({
           id={id}
           readOnly={readOnly}
           disabled={disabled}
-          className={clsx(
+          className={cn(
             "flex w-full rounded-lg shadow-sm",
             "min-h-[2.25rem] py-0 md:min-h-[2.5rem]",
             "border-gray-300 focus:border-primary-500 focus:ring-primary-500",

@@ -1,5 +1,5 @@
+import { cn } from "@/Lib/utils";
 import { FileWithPreview } from "@/types/dropzone";
-import clsx from "clsx";
 import get from "lodash.get";
 import * as React from "react";
 import { Accept, FileRejection, useDropzone } from "react-dropzone";
@@ -154,10 +154,10 @@ export default function DropzoneInput({
         </div>
       ) : files?.length >= maxFiles ? (
         <ul
-          className={clsx([
+          className={cn(
             "divide-y divide-gray-300 rounded-lg border border-gray-300",
             withLabel && "mt-1",
-          ])}
+          )}
         >
           {files.map((file, index) => (
             <FilePreview
@@ -176,16 +176,16 @@ export default function DropzoneInput({
           render={({ field }) => (
             <>
               <div
-                className={clsx([
+                className={cn(
                   "focus:ring-dark-400 group focus:outline-none",
                   withLabel && "mt-1",
-                ])}
+                )}
                 {...getRootProps()}
                 ref={dropzoneRef}
               >
                 <input {...field} {...getInputProps()} value="" />
                 <div
-                  className={clsx(
+                  className={cn(
                     "w-full cursor-pointer rounded-lg px-2 py-8",
                     error
                       ? "dropzone-border-dash-error border-red-500 group-focus:border-red-500"

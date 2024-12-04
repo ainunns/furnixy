@@ -142,6 +142,7 @@ export default function Create({
                 id="name"
                 name="name"
                 label="Name"
+                placeholder="Input product name"
                 validation={{
                   required: "Name is required",
                 }}
@@ -150,6 +151,7 @@ export default function Create({
                 id="description"
                 name="description"
                 label="Description"
+                placeholder="Input product description"
                 validation={{
                   required: "Description is required",
                 }}
@@ -159,6 +161,7 @@ export default function Create({
                 name="price"
                 label="Price"
                 type="number"
+                placeholder="Input product price"
                 validation={{
                   required: "Price is required",
                   min: {
@@ -172,6 +175,7 @@ export default function Create({
                 name="stock"
                 label="Stock"
                 type="number"
+                placeholder="Input product stock"
                 validation={{
                   required: "Stock is required",
                   min: {
@@ -184,6 +188,7 @@ export default function Create({
                 id="city"
                 name="city"
                 label="City"
+                placeholder="Input product city"
                 validation={{
                   required: "City is required",
                 }}
