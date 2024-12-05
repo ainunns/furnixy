@@ -184,7 +184,7 @@ export default function Welcome() {
           </Typography>
         </div>
         <div className="flex flex-col lg:flex-row gap-6">
-          <div className="rounded-lg bg-primary-700 p-4 h-[150px] flex flex-col justify-center">
+          <div className="rounded-lg bg-primary-700 p-4 min-h-[150px] flex flex-col justify-center">
             <Typography className="text-white">
               "The quality of the furniture is outstanding! My living room has
               never looked better. The delivery was smooth, and the assembly was
@@ -192,7 +192,7 @@ export default function Welcome() {
             </Typography>
             <Typography className="text-white">- Emily J.</Typography>
           </div>
-          <div className="rounded-lg bg-secondary-500 p-4 h-[150px] flex flex-col justify-center">
+          <div className="rounded-lg bg-secondary-500 p-4 min-h-[150px] flex flex-col justify-center">
             <div>
               <Typography>
                 "I love my new dining table set! It’s sturdy, elegant, and fits
@@ -202,7 +202,7 @@ export default function Welcome() {
               <Typography>- James T.</Typography>
             </div>
           </div>
-          <div className="rounded-lg bg-primary-700 p-4 h-[150px] flex flex-col justify-center">
+          <div className="rounded-lg bg-primary-700 p-4 min-h-[150px] flex flex-col justify-center">
             <div>
               <Typography className="text-white">
                 "Affordable prices, premium quality, and excellent designs. The

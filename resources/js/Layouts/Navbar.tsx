@@ -153,39 +153,30 @@ export default function Navbar() {
             (showingNavigationDropdown ? "block" : "hidden") + " sm:hidden"
           }
         >
-          {auth.user !== null && (
-            <div className="space-y-1 pb-3 pt-2">
+          <div className="space-y-1 pb-3 pt-2">
+            <ResponsiveNavLink
+              href={route("product.index")}
+              active={route().current("product.index")}
+            >
+              Product
+            </ResponsiveNavLink>
+            {auth.user !== null && auth.user.role === "user" && (
               <ResponsiveNavLink
-                href={route("dashboard")}
-                active={route().current("dashboard")}
+                href={route("cart.index")}
+                active={route().current("cart.index")}
               >
-                Dashboard
+                Cart
               </ResponsiveNavLink>
+            )}
+            {auth.user !== null && auth.user.role === "user" && (
               <ResponsiveNavLink
-                href={route("product.index")}
-                active={route().current("product.index")}
+                href={route("transaction.index")}
+                active={route().current("transaction.index")}
               >
-                Product
+                Transaction
               </ResponsiveNavLink>
-              {auth.user !== null && auth.user.role === "user" && (
-                <ResponsiveNavLink
-                  href={route("cart.index")}
-                  active={route().current("cart.index")}
-                >
-                  Cart
-                </ResponsiveNavLink>
-              )}
-              {auth.user !== null && auth.user.role === "user" && (
-                <ResponsiveNavLink
-                  href={route("transaction.index")}
-                  active={route().current("transaction.index")}
-                >
-                  Transaction
-                </ResponsiveNavLink>
-              )}
-            </div>
-          )}
-
+            )}
+          </div>
           {auth.user !== null ? (
             <div className="border-t border-gray-200 pb-1 pt-4">
               <div className="px-4">
