@@ -13,7 +13,7 @@ import { cn, numberToCurrency } from "@/Lib/utils";
 import { CartType } from "@/types/entities/cart";
 import { CategoryType } from "@/types/entities/category";
 import { TransactionType } from "@/types/entities/transaction";
-import { Head } from "@inertiajs/react";
+import { Head, usePage } from "@inertiajs/react";
 import { router } from "@inertiajs/react";
 import { format, formatDate } from "date-fns";
 import { Search, XCircle } from "lucide-react";
@@ -114,6 +114,16 @@ export default function TransactionIndex({
     }
   }, [filterQuery.category, filterDate]);
 
+  const { auth } = usePage().props as unknown as {
+    auth: {
+      user: {
+        name: string;
+        email: string;
+        role: string;
+      } | null;
+    };
+  };
+
   return (
     <AuthenticatedLayout>
       <Head title="Order List" />
@@ -182,6 +192,16 @@ export default function TransactionIndex({
                   <Typography variant="s3" className="text-typo-secondary">
                     TR/{format(new Date(t.created_at), "yyyyMMdd")}/{t.id}
                   </Typography>
+                  {auth.user?.role === "admin" && (
+                    <>
+                      <Typography variant="s3" className="text-typo-tertiary">
+                        |
+                      </Typography>
+                      <Typography variant="s3" className="text-typo-secondary">
+                        {t.cart_product[0].user.name}
+                      </Typography>
+                    </>
+                  )}
                 </div>
                 <div className="flex flex-col gap-4 w-full">
                   <ProductItems

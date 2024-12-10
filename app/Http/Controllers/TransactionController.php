@@ -19,7 +19,7 @@ class TransactionController extends Controller
 
         $category = Category::all();
 
-        $transaction = Transaction::with(['cart_product.product.category'])
+        $transaction = Transaction::with(['cart_product.user', 'cart_product.product.category'])
             ->whereHas('cart_product.product.category', function ($query) use ($categoryIds) {
                 if (!empty($categoryIds)) {
                     $query->whereIn('category_id', $categoryIds);

@@ -48,7 +48,7 @@ export default function Navbar() {
                     Cart
                   </NavLink>
                 )}{" "}
-                {auth.user !== null && auth.user.role === "user" && (
+                {auth.user !== null && (
                   <NavLink
                     href={route("transaction.index")}
                     active={route().current("transaction.index")}
@@ -168,7 +168,7 @@ export default function Navbar() {
                 Cart
               </ResponsiveNavLink>
             )}
-            {auth.user !== null && auth.user.role === "user" && (
+            {auth.user !== null && (
               <ResponsiveNavLink
                 href={route("transaction.index")}
                 active={route().current("transaction.index")}
