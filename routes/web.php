@@ -35,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/history', [TransactionController::class, 'index'])->name('transaction.index');
 });
 
 Route::middleware('auth', 'role:user')->group(function () {
@@ -44,8 +46,6 @@ Route::middleware('auth', 'role:user')->group(function () {
         Route::delete('/{id}/delete', [CartController::class, 'deleteFromCart'])->name('cart.delete');
         Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
     });
-
-    Route::get('/history', [TransactionController::class, 'index'])->name('transaction.index');
 });
 
 Route::middleware('auth', 'role:admin')->group(function () {

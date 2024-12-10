@@ -24,10 +24,13 @@ class TransactionController extends Controller
                 if (!empty($categoryIds)) {
                     $query->whereIn('category_id', $categoryIds);
                 }
-            })
-            ->whereHas('cart_product', function ($query) {
+            });
+
+        if (Auth::user()->role == 'user') {
+            $transaction = $transaction->whereHas('cart_product', function ($query) {
                 $query->where('user_id', Auth::id());
             });
+        }
 
         if ($startDate && $endDate) {
             $transaction = $transaction->whereBetween('created_at', [
@@ -35,7 +38,7 @@ class TransactionController extends Controller
                 Carbon::parse($endDate)->endOfDay()
             ]);
         }
-            
+
         $transaction = $transaction->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Transaction/Index', [
