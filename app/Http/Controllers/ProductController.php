@@ -103,7 +103,7 @@ class ProductController extends Controller
         $user = Auth::user();
 
         if ($query) {
-            $response = Http::post('https://ecommerce-search-engine.onrender.com/search', [
+            $response = Http::timeout(6000)->post('https://ecommerce-search-engine.onrender.com/search', [
                 'query' => $query,
                 'records' => $product->toArray(),
                 'confidence' => 0.3
@@ -134,7 +134,7 @@ class ProductController extends Controller
     
         $allProducts = Product::with('category')->get();
     
-        $response = Http::post('https://ecommerce-search-engine.onrender.com/search', [
+        $response = Http::timeout(6000)->post('https://ecommerce-search-engine.onrender.com/search', [
             'query' => $product->name,
             'records' => $allProducts->toArray(),
             'confidence' => 0.3,
